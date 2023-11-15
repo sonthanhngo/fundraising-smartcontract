@@ -3,7 +3,7 @@ import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/Di
 import { DisplayStatistics } from '../DisplayStatistics';
 import { Loader } from '../../../common/components/misc/Loader';
 import { CONTRACT_ADDRESS } from '../../../common/utils';
-
+import { ContractFactory } from 'ethers';
 export default function HomePage() {
   const { contract } = useContract(CONTRACT_ADDRESS);
   const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(

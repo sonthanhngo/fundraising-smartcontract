@@ -17,7 +17,17 @@ export const convertVND = (value) => {
   const removeNonNumeric = (num) => num.toString().replace(/[^0-9]/g, '');
   return addCommas(removeNonNumeric(Math.ceil(etherPrice * parseFloat(value))));
 };
+export const formatVND = (value) => {
+  const addCommas = (num) =>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const removeNonNumeric = (num) => num.toString().replace(/[^0-9]/g, '');
+  return addCommas(removeNonNumeric(value));
+};
 
+export const convertEthers = (value) => {
+  const etherPrice = 44519009;
+  return Math.ceil(etherPrice / parseFloat(value));
+};
 export const convertUnixTimestamptoDate = (unixTimestamp) => {
   const date = new Date(unixTimestamp);
   const formatter = new Intl.DateTimeFormat('en-GB', {
