@@ -11,6 +11,7 @@ import {
   convertUnixTimestamptoDate,
   CONTRACT_ADDRESS,
   convertVND,
+  convertEthers,
 } from '../../../common/utils';
 import { useState } from 'react';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
@@ -19,7 +20,8 @@ import { Loader } from '../../../common/components/misc/Loader';
 
 export default function ViewCampaignPage() {
   // donate amount
-  const [donateAmount, setDonateAmount] = useState('0.01');
+  const [donateAmount, setDonateAmount] = useState(100000);
+  console.log(donateAmount);
   // get campaignId from url params
   const { campaignId } = useParams();
   //get address
@@ -68,20 +70,19 @@ export default function ViewCampaignPage() {
                 <div className='bg-green-700 h-[10px]'></div>
                 <div>
                   <h3 className='font-bold text-[4rem] text-green-700 '>
-                    {parseFloat(
+                    {convertVND(
                       ethers.utils.formatEther(
                         campaign.amountCollected.toString()
                       )
                     )}
-                    {''} ethers
                   </h3>
                   <h4 className=' text-[1.2rem]'>
                     of target{' '}
                     <span className='font-bold'>
-                      {parseFloat(
+                      {convertVND(
                         ethers.utils.formatEther(campaign.target.toString())
                       )}
-                      {''} ethers
+                      {''} VND
                     </span>
                   </h4>
                 </div>
@@ -134,9 +135,13 @@ export default function ViewCampaignPage() {
                           )}
                         </a>
                         <span className='inline-block float-right font-semibold'>
-                          {ethers.utils.formatEther(
-                            campaign.donations[i].toString()
+                          {convertVND(
+                            ethers.utils.formatEther(
+                              campaign.donations[i].toString()
+                            )
                           )}
+                          {'  '}
+                          VND
                         </span>
                       </h4>
                     </li>
@@ -151,7 +156,7 @@ export default function ViewCampaignPage() {
                 ) : (
                   <div>
                     <h3 className='font-semibold text-[2rem]'>
-                      want to help us?
+                      support us here
                     </h3>
                     <div className='flex'>
                       <input
@@ -171,7 +176,9 @@ export default function ViewCampaignPage() {
                             'donateToCampaign',
                             [campaignId],
                             {
-                              value: ethers.utils.parseEther(donateAmount),
+                              value: ethers.utils.parseEther(
+                                convertEthers(donateAmount)
+                              ),
                             }
                           );
                           setTxHash(tx.receipt.transactionHash);
@@ -189,15 +196,14 @@ export default function ViewCampaignPage() {
                     </div>
                     {/* Warning */}
                     <div className='font-semibold mt-2'>
-                      {donateAmount === '' ||
-                      parseFloat(donateAmount) < 0.01 ? (
+                      {donateAmount === '' || donateAmount < 100000 ? (
                         <h4 className='text-red-500'>
-                          donation should be larger than 0.01 ethers ~ 500,000
-                          VND.
+                          donation should be larger than 100,000 VND ~ 0.002
+                          ethers.
                         </h4>
                       ) : (
                         <h4 className=' text-green-700'>
-                          that will be ~{convertVND(donateAmount)} VND.
+                          that will be ~{convertEthers(donateAmount)} ethers.
                         </h4>
                       )}
                     </div>

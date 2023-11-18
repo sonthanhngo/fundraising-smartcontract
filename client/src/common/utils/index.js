@@ -26,7 +26,7 @@ export const formatVND = (value) => {
 
 export const convertEthers = (value) => {
   const etherPrice = 44519009;
-  return Math.ceil(etherPrice / parseFloat(value));
+  return parseFloat(value / etherPrice, 5).toFixed(4);
 };
 export const convertUnixTimestamptoDate = (unixTimestamp) => {
   const date = new Date(unixTimestamp);

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-
+import { convertVND } from '../../common/utils/index';
 export const DisplayStatistics = ({ statistics }) => {
   return (
     <div>
@@ -13,9 +13,9 @@ export const DisplayStatistics = ({ statistics }) => {
           </li>
           <li className='w-full h-full  border-y-[0.2rem] p-[20px]'>
             <h1 className='text-[2.4rem] font-semibold text-green-700'>
-              {ethers.utils.formatEther(statistics[1].toString())}
+              {convertVND(ethers.utils.formatEther(statistics[1].toString()))}
             </h1>
-            <h2 className='text-[1.2rem]'>ethers has sent</h2>
+            <h2 className='text-[1.2rem]'>VND has sent</h2>
           </li>
           <li className='w-full h-full border-[0.2rem] p-[20px] rounded-r-lg '>
             <h1 className='text-[2.4rem] font-semibold text-green-700'>

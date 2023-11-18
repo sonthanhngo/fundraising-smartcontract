@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Web3Button, useStorageUpload } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
-import { convertVND } from '../../../common/utils';
+import { convertVND, convertEthers } from '../../../common/utils';
 import ImageIcon from '@mui/icons-material/Image';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
 import { Loader } from '../../../common/components/misc/Loader';
@@ -11,7 +11,7 @@ import { CONTRACT_ADDRESS } from '../../../common/utils';
 export default function CreateCampaignPage() {
   const navigate = useNavigate();
   // target value
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(0);
   // waiting for transaction execute in MetaMask
   const [isWaitingTransaction, setIsWaitingTransaction] = useState(false);
   // transaction hash
@@ -28,6 +28,7 @@ export default function CreateCampaignPage() {
     deadline: '',
     images: [],
   });
+  console.log(form.target);
   const handleFormFieldChange = (fieldName, e) => {
     switch (fieldName) {
       case 'deadline':
@@ -36,7 +37,7 @@ export default function CreateCampaignPage() {
       case 'target':
         setForm({
           ...form,
-          target: ethers.utils.parseEther(e),
+          target: ethers.utils.parseEther(convertEthers(e)),
         });
         break;
       default:
@@ -63,7 +64,7 @@ export default function CreateCampaignPage() {
   };
   // temporary image file for preview
   const [imgFiles, setImgFiles] = useState([]);
-  console.log(form.images);
+  console.log(form);
 
   return (
     <div>
@@ -129,20 +130,21 @@ export default function CreateCampaignPage() {
                   type='text'
                   pattern='[0-9]*[.]?[0-9]*'
                   className=' w-[100%] h-[50px] px-3 focus:outline-none '
+                  value={value}
                   onChange={(e) => {
                     setValue(e.target.value);
                     handleFormFieldChange('target', e.target.value);
                   }}
                 />
-                <div className='pr-2'>ethers</div>
+                <div className='pr-2'>VND</div>
               </div>
             </li>
-            {value && (
+            {value !== 0 && (
               <h3 className='text-[1.2rem]'>
                 that would be
                 <span className='text-red-500 font-semibold'>
                   {' '}
-                  {convertVND(value)} VND.
+                  {convertEthers(value)} ethers.
                 </span>
               </h3>
             )}
