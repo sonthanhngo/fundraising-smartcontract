@@ -2,6 +2,7 @@ import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/Di
 import { useContract, useContractRead, useAddress } from '@thirdweb-dev/react';
 import { CONTRACT_ADDRESS } from '../../../common/utils';
 import { Loader } from '../../../common/components/misc/Loader';
+import DisplayChart from '../DisplayChart';
 export default function ProfilePage() {
   const address = useAddress();
   const { contract } = useContract(CONTRACT_ADDRESS);
@@ -15,6 +16,7 @@ export default function ProfilePage() {
         <Loader title='loading campaigns' />
       ) : (
         <div className='h-[100%] mx-[90px] '>
+          <DisplayChart campaigns={campaigns} />
           <DisplayCampaigns
             campaigns={campaigns}
             title='your campaigns'

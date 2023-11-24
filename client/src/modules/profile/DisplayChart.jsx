@@ -9,29 +9,23 @@ import {
   Legend,
   Bar,
 } from 'recharts';
-const data = [
-  {
-    name: 'Page A',
-    income: 20000000,
-  },
-  {
-    name: 'Page B',
-    income: 10000000,
-  },
-  {
-    name: 'Page A',
-    income: 50000000,
-  },
-  {
-    name: 'Page D',
-    income: 100000000,
-  },
-].;
-export default function TestPage() {
+import { ethers } from 'ethers';
+export default function DisplayChart({ campaigns }) {
+  console.log(
+    campaigns.map((campaign) => ({
+      title: campaign.title,
+      deadline: campaign.deadline.toNumber(),
+    }))
+  );
+  const data = campaigns.map((campaign) => ({
+    title: campaign.title,
+    target: ethers.utils.formatEther(campaign.target.toString()),
+  }));
   return (
-    <div className='ml-[200px]'>
+    <div>
+      <h3>Income</h3>
       <BarChart
-        width={600}
+        width={1000}
         height={300}
         className='w-full'
         data={data}
@@ -42,12 +36,12 @@ export default function TestPage() {
           bottom: 5,
         }}
       >
-        <XAxis dataKey='name' />
+        <XAxis dataKey='title' />
         <YAxis />
         <CartesianGrid stroke='#ccc' strokeDasharray='5 5' />
 
         {/* <CartesianGrid stroke='#ccc' /> */}
-        {/* <Tooltip /> */}
+        <Tooltip />
         <Legend />
         {/* <Line
           type='monotone'
@@ -55,7 +49,7 @@ export default function TestPage() {
           stroke='#8884d8'
           activeDot={{ r: 8 }}
         /> */}
-        <Bar dataKey='income' barSize={30} fill='#8884d8' />
+        <Bar dataKey='target' barSize={30} fill='#8884d8' />
       </BarChart>
     </div>
   );

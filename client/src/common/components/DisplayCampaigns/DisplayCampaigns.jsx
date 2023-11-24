@@ -2,7 +2,6 @@ import { ethers } from 'ethers';
 import { Pagination } from './Pagination';
 
 export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
-  console.log(campaigns[0]);
   const parsedCampaigns = (campaigns, type, address) => {
     const parsedData = campaigns.map((campaign, i) => ({
       owner: campaign.owner,
