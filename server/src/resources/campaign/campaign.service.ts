@@ -10,7 +10,9 @@ export class CampaignService {
   constructor(@InjectModel(Campaign.name) private model: Model<Campaign>) {}
 
   async getCampaigns() {
-    const res = await this.model.find({ isVerified: false });
+    const res = await this.model
+      .find({ isVerified: false })
+      .select('-reviews -updates -__v');
     return res;
   }
   async createCampaign(campaign: CampaignDto) {
@@ -22,10 +24,18 @@ export class CampaignService {
   //   return res;
   // }
 
-  async verifyCampaign(id: string) {
+  async acceptCampaign(id: string) {
     const res = await this.model.updateOne(
       { smartContractId: id },
-      { isVerified: true },
+      { status: 2 },
+    );
+    return res;
+  }
+
+  async declineCampaign(id: string) {
+    const res = await this.model.updateOne(
+      { smartContractId: id },
+      { status: 0 },
     );
     return res;
   }
@@ -34,14 +44,14 @@ export class CampaignService {
     const res = await this.model
       .find({ smartContractId: id })
       .select('reviews -_id');
-    return res[0].reviews;
+    return res == undefined ? 'no reviews' : res[0].reviews;
   }
 
   async getCampaignUpdates(id: string) {
     const res = await this.model
       .find({ smartContractId: id })
       .select('updates -_id');
-    return res[0].updates;
+    return res == undefined ? 'no updates' : res[0].updates;
   }
 
   async createReview(id: string, review: ReviewDto) {

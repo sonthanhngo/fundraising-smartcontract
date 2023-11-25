@@ -18,10 +18,15 @@ export class Update {
   update: string;
 }
 
+enum Status {
+  DECLINE,
+  PENDING,
+  ACCEPT,
+}
 @Schema()
 export class Campaign {
-  @Prop({ default: false })
-  isVerified: boolean;
+  @Prop({ enum: Status, default: Status.PENDING })
+  status: boolean;
 
   @Prop({ default: crypto.randomUUID() })
   smartContractId: string;

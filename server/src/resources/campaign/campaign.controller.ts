@@ -13,11 +13,15 @@ export class CampaignController {
     return this.service.createCampaign(body);
   }
 
-  @Patch(':id/verify')
-  verifyCampaign(@Param('id') id: string) {
-    return this.service.verifyCampaign(id);
+  @Patch(':id/accept')
+  acceptCampaign(@Param('id') id: string) {
+    return this.service.acceptCampaign(id);
   }
 
+  @Patch(':id/decline')
+  declineCampaign(@Param('id') id: string) {
+    return this.service.declineCampaign(id);
+  }
   @Get(':id/review')
   getCampaignReviews(@Param('id') id: string) {
     return this.service.getCampaignReviews(id);

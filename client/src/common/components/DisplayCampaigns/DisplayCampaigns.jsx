@@ -40,7 +40,6 @@ export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
       );
     }
   };
-
   return (
     <div className=''>
       <h1 className='text-[2.4rem] font-bold text-green-700 my-5'>{title}</h1>
