@@ -8,4 +8,8 @@ export class ReviewDto {
   @IsString()
   @IsNotEmpty()
   review: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
 }

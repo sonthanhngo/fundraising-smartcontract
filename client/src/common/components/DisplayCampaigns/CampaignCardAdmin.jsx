@@ -1,5 +1,5 @@
 // import { tagType, thirdweb } from '../assets';
-import { daysLeft } from '../../utils';
+import { convertUnixTimestamptoDate, daysLeft } from '../../utils';
 import { ImageSlider } from '../misc/ImageSlider';
 import { Web3Button } from '@thirdweb-dev/react';
 import DoneIcon from '@mui/icons-material/Done';
@@ -8,6 +8,7 @@ import { Loader } from '../misc/Loader';
 import { CONTRACT_ADDRESS } from '../../utils';
 export const CampaignCardAdmin = ({ campaign }) => {
   const {
+    _id: id,
     owner,
     ownerName,
     title,
@@ -15,8 +16,11 @@ export const CampaignCardAdmin = ({ campaign }) => {
     deadline,
     description,
     images,
-    campaignId,
+
+    timeCreated,
   } = campaign;
+
+  console.log(campaign);
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div>
@@ -53,11 +57,15 @@ export const CampaignCardAdmin = ({ campaign }) => {
           )}
           funded
         </h2> */}
-
-          <h2 className='text-[1rem] mb-3'> {daysLeft(deadline)} days to go</h2>
+          <h2 className='text-[1rem] mb-3'>
+            starts at {convertUnixTimestamptoDate(timeCreated)}
+          </h2>
+          <h2 className='text-[1rem] mb-3'>
+            ends in {convertUnixTimestamptoDate(deadline)}
+          </h2>
         </div>
         <div className='w-1/6 my-10'>
-          <Web3Button
+          {/* <Web3Button
             contractAddress={CONTRACT_ADDRESS}
             action={async (contract) => {
               setIsLoading(true);
@@ -68,6 +76,35 @@ export const CampaignCardAdmin = ({ campaign }) => {
             className='!bg-white'
           >
             <DoneIcon />
+          </Web3Button> */}
+          <Web3Button
+            contractAddress={CONTRACT_ADDRESS}
+            action={async (contract) => {
+              // setIsWaitingTransaction(true);
+              const tx = await contract.call('createCampaign', [
+                id,
+                owner,
+                ownerName,
+                title,
+                description,
+                target,
+                deadline,
+                images,
+              ]);
+              // setTxHash(tx.receipt.transactionHash);
+              // setIsWaitingTransaction(false);
+              // setIsLoadingTransactionInfo(true);
+              // setTimeout(() => {
+              //   setIsLoadingTransactionInfo(false);
+              //   navigate('/profile');
+              // }, 5000);
+            }}
+            onError={() => {
+              // setIsWaitingTransaction(false);
+              // window.location.reload();
+            }}
+          >
+            publish campaign
           </Web3Button>
         </div>
       </div>

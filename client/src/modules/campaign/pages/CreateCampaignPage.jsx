@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Web3Button, useStorageUpload } from '@thirdweb-dev/react';
+import { Web3Button, useAddress, useStorageUpload } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
 import { convertVND, convertEthers } from '../../../common/utils';
 import ImageIcon from '@mui/icons-material/Image';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
 import { Loader } from '../../../common/components/misc/Loader';
 import { CONTRACT_ADDRESS } from '../../../common/utils';
+import { useCampaignCreateMutation } from '../../../api/campaign';
 
 export default function CreateCampaignPage() {
+  const address = useAddress();
   const navigate = useNavigate();
   // target value
-  const [value, setValue] = useState(0);
   // waiting for transaction execute in MetaMask
   const [isWaitingTransaction, setIsWaitingTransaction] = useState(false);
   // transaction hash
@@ -24,26 +25,21 @@ export default function CreateCampaignPage() {
     ownerName: '',
     title: '',
     description: '',
-    target: '',
+    target: '10000000',
     deadline: '',
     images: [],
   });
-  console.log(form.target);
   const handleFormFieldChange = (fieldName, e) => {
     switch (fieldName) {
       case 'deadline':
         setForm({ ...form, deadline: new Date(e).getTime() });
         break;
-      case 'target':
-        setForm({
-          ...form,
-          target: ethers.utils.parseEther(convertEthers(e)),
-        });
-        break;
       default:
         setForm({ ...form, [fieldName]: e });
     }
   };
+  console.log(ethers.utils.parseEther(convertEthers(form.target)));
+  const [campaignCreate] = useCampaignCreateMutation();
   // storage upload
   const { mutateAsync: upload } = useStorageUpload();
   const uploader = async (files) => {
@@ -130,21 +126,20 @@ export default function CreateCampaignPage() {
                   type='text'
                   pattern='[0-9]*[.]?[0-9]*'
                   className=' w-[100%] h-[50px] px-3 focus:outline-none '
-                  value={value}
+                  value={form.target}
                   onChange={(e) => {
-                    setValue(e.target.value);
                     handleFormFieldChange('target', e.target.value);
                   }}
                 />
                 <div className='pr-2'>VND</div>
               </div>
             </li>
-            {value !== 0 && (
+            {form.target !== 0 && (
               <h3 className='text-[1.2rem]'>
                 that would be
                 <span className='text-red-500 font-semibold'>
                   {' '}
-                  {convertEthers(value)} ethers.
+                  {convertEthers(form.target)} ethers.
                 </span>
               </h3>
             )}
@@ -179,7 +174,15 @@ export default function CreateCampaignPage() {
               )}
             </div>
             {/* create campaign button */}
-            <Web3Button
+            <button
+              onClick={() =>
+                campaignCreate({ body: { ...form, owner: address } })
+              }
+              className='mt-10'
+            >
+              Create
+            </button>
+            {/* <Web3Button
               contractAddress={CONTRACT_ADDRESS}
               action={async (contract) => {
                 setIsWaitingTransaction(true);
@@ -206,7 +209,7 @@ export default function CreateCampaignPage() {
               className='!text-[1.2rem] !mt-[240px] !ml-[500px] !min-w-[50px] !bg-white'
             >
               publish
-            </Web3Button>
+            </Web3Button> */}
           </div>
         </div>
       </div>

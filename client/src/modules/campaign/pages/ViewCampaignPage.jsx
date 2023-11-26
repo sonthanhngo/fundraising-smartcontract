@@ -33,6 +33,15 @@ export default function ViewCampaignPage() {
     'getCampaignById',
     [campaignId]
   );
+  const { data: donations, isLoading: isLoadingDonation } = useContractRead(
+    contract,
+    'getDonationById',
+    [campaignId]
+  );
+  if (!isLoadingCampaign) {
+    console.log(campaign.deadline);
+  }
+  // console.log(campaign.target.toString());
   // wait for transaction to complete in MetaMask
   const [isWaitingTransaction, setIsWaitingTransaction] = useState(false);
   // transaction hash
@@ -70,25 +79,19 @@ export default function ViewCampaignPage() {
                 <div className='bg-green-700 h-[10px]'></div>
                 <div>
                   <h3 className='font-bold text-[4rem] text-green-700 '>
-                    {convertVND(
-                      ethers.utils.formatEther(
-                        campaign.amountCollected.toString()
-                      )
-                    )}
+                    {campaign.amountCollected.toString()}
                   </h3>
                   <h4 className=' text-[1.2rem]'>
                     of target{' '}
                     <span className='font-bold'>
-                      {convertVND(
-                        ethers.utils.formatEther(campaign.target.toString())
-                      )}
+                      {campaign.target.toNumber()}
                       {''} VND
                     </span>
                   </h4>
                 </div>
                 <div>
                   <h3 className='mt-[40px] font-bold text-[2.4rem]'>
-                    {campaign.donators.length}
+                    {donations.donators.length}
                   </h3>
                   <h4 className=' text-[1.2rem]'>peoples donated</h4>
                   <h3 className='mt-[40px] font-bold text-[2.4rem]'>
@@ -119,7 +122,7 @@ export default function ViewCampaignPage() {
               <div className='w-3/5'>
                 <h3 className='font-semibold text-[2rem]'>latest donators</h3>
                 <ul>
-                  {campaign.donators.map((donator, i) => (
+                  {donations.donators.map((donator, i) => (
                     <li key={i}>
                       <h4 className='justify-start text-[1.2rem] '>
                         <a

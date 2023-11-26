@@ -25,10 +25,6 @@ export class CampaignDto {
   @IsNotEmpty()
   deadline: string;
 
-  @IsString()
-  @IsNotEmpty()
-  timeCreated: string;
-
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)

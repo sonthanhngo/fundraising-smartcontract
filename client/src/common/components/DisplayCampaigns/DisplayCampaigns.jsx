@@ -6,16 +6,12 @@ export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
     const parsedData = campaigns.map((campaign, i) => ({
       owner: campaign.owner,
       ownerName: campaign.ownerName,
-      verified: campaign.verified,
       title: campaign.title,
       description: campaign.description,
-      target: ethers.utils.formatEther(campaign.target.toString()),
+      target: campaign.target.toNumber(),
       timeCreated: campaign.timeCreated.toNumber(),
       deadline: campaign.deadline.toNumber(),
-      amountCollected: ethers.utils.formatEther(
-        campaign.amountCollected.toString()
-      ),
-      donators: campaign.donators,
+      amountCollected: campaign.amountCollected.toNumber(),
       images: campaign.images,
       campaignId: i,
     }));
@@ -26,7 +22,7 @@ export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
     if (type === 'admin') {
       return sortedCampaigns.filter((campaign) => campaign.verified === 1);
     } else if (type === 'home') {
-      return sortedCampaigns.filter((campaign) => campaign.verified === 2);
+      return sortedCampaigns;
     } else if (type === 'userCampaign') {
       return sortedCampaigns.filter(
         (campaign) => campaign.owner === address && campaign.verified !== 0
@@ -34,9 +30,7 @@ export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
     } else if (type === 'userDonatedCampaign') {
       return sortedCampaigns.filter(
         (campaign) =>
-          campaign.verified === 2 &&
-          campaign.donators !== undefined &&
-          campaign.donators.includes(address)
+          campaign.donators !== undefined && campaign.donators.includes(address)
       );
     }
   };

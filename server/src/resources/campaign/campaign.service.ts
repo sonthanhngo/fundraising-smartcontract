@@ -12,11 +12,15 @@ export class CampaignService {
   async getCampaigns() {
     const res = await this.model
       .find({ isVerified: false })
-      .select('-reviews -updates -__v');
+      .select('-reviews -updates -__v ');
     return res;
   }
   async createCampaign(campaign: CampaignDto) {
-    const res = await this.model.create(campaign);
+    console.log(campaign);
+    const res = await this.model.create({
+      ...campaign,
+      timeCreated: Date.now() + 7 * 3600 * 1000,
+    });
     return res;
   }
   // async getCampaignById(id: string) {
@@ -25,38 +29,28 @@ export class CampaignService {
   // }
 
   async acceptCampaign(id: string) {
-    const res = await this.model.updateOne(
-      { smartContractId: id },
-      { status: 2 },
-    );
+    const res = await this.model.updateOne({ _id: id }, { isVerified: true });
     return res;
   }
 
   async declineCampaign(id: string) {
-    const res = await this.model.updateOne(
-      { smartContractId: id },
-      { status: 0 },
-    );
+    const res = await this.model.deleteOne({ _id: id });
     return res;
   }
 
   async getCampaignReviews(id: string) {
-    const res = await this.model
-      .find({ smartContractId: id })
-      .select('reviews -_id');
+    const res = await this.model.find({ _id: id }).select('reviews -_id');
     return res == undefined ? 'no reviews' : res[0].reviews;
   }
 
   async getCampaignUpdates(id: string) {
-    const res = await this.model
-      .find({ smartContractId: id })
-      .select('updates -_id');
+    const res = await this.model.find({ _id: id }).select('updates -_id');
     return res == undefined ? 'no updates' : res[0].updates;
   }
 
   async createReview(id: string, review: ReviewDto) {
     const res = await this.model.updateOne(
-      { smartContractId: id },
+      { _id: id },
       { $push: { reviews: review } },
     );
     return res;
@@ -64,8 +58,8 @@ export class CampaignService {
 
   async createUpdate(id: string, update: UpdateDto) {
     const res = await this.model.updateOne(
-      { smartContractId: id },
-      { $push: { updates: update } },
+      { _id: id },
+      { $push: { updates: { ...update, date: Date.now() + 7 * 3600 * 1000 } } },
     );
     return res;
   }

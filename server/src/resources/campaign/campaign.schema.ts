@@ -7,29 +7,24 @@ export class Review {
 
   @Prop()
   review: string;
+
+  @Prop()
+  amount: number;
 }
 
 @Schema({ _id: false })
 export class Update {
-  @Prop({ type: Date, default: Date.now() })
+  @Prop({ type: Date })
   date: Date;
 
   @Prop()
   update: string;
 }
 
-enum Status {
-  DECLINE,
-  PENDING,
-  ACCEPT,
-}
 @Schema()
 export class Campaign {
-  @Prop({ enum: Status, default: Status.PENDING })
-  status: boolean;
-
-  @Prop({ default: crypto.randomUUID() })
-  smartContractId: string;
+  @Prop({ default: false })
+  isVerified: boolean;
 
   @Prop()
   owner: string;

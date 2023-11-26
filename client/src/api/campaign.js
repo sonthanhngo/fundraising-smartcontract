@@ -4,12 +4,20 @@ export const rtkApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     campaignGetAll: builder.query({
       query: () => ({ url: '/campaign', method: 'GET' }),
+      transformResponse: (responses) => {
+        const parsedRes = responses.map((response) => ({
+          ...response,
+          deadline: Number(response.deadline),
+          timeCreated: Number(response.timeCreated),
+        }));
+        return parsedRes;
+      },
     }),
     campaignCreate: builder.mutation({
-      query: (campaign) => ({
+      query: (args) => ({
         url: '/campaign',
         method: 'POST',
-        body: campaign,
+        body: args.body,
       }),
     }),
     campaignAccept: builder.mutation({

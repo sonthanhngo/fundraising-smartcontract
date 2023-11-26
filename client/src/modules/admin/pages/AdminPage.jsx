@@ -5,18 +5,18 @@ import {
 import { useContract, useContractRead, useAddress } from '@thirdweb-dev/react';
 import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/DisplayCampaigns';
 import { Loader } from '../../../common/components/misc/Loader';
+import { useCampaignGetAllQuery } from '../../../api/campaign';
+import { Pagination } from '../../../common/components/DisplayCampaigns/Pagination';
+
 export default function AdminPage() {
   const address = useAddress();
   const ADMIN_ADDRESS = '0x12b70411d7eD174c9841E6c1E6ec5bF052eB5e86';
-  const { contract } = useContract(CONTRACT_ADDRESS);
-  const { data: campaigns, isLoading } = useContractRead(
-    contract,
-    'getCampaigns'
-  );
+
+  const { data: campaigns, isLoading } = useCampaignGetAllQuery();
 
   return (
     <div>
-      {address !== ADMIN_ADDRESS ? (
+      {/* {address !== ADMIN_ADDRESS ? (
         <Loader title='not admin, prohibited' />
       ) : (
         <div className='h-[100%] mx-[90px]'>
@@ -30,7 +30,8 @@ export default function AdminPage() {
             />
           )}
         </div>
-      )}
+      )} */}
+      {!isLoading && <Pagination campaigns={campaigns} isAdmin={true} />}
     </div>
   );
 }

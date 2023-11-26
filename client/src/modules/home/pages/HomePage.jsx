@@ -2,7 +2,10 @@ import { useContract, useContractRead } from '@thirdweb-dev/react';
 import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/DisplayCampaigns';
 import { DisplayStatistics } from '../DisplayStatistics';
 import { Loader } from '../../../common/components/misc/Loader';
-import { CONTRACT_ADDRESS } from '../../../common/utils';
+import {
+  CONTRACT_ADDRESS,
+  convertUnixTimestamptoDate,
+} from '../../../common/utils';
 import { ContractFactory } from 'ethers';
 export default function HomePage() {
   const { contract } = useContract(CONTRACT_ADDRESS);
@@ -14,6 +17,18 @@ export default function HomePage() {
     contract,
     'getStatistics'
   );
+  if (!isLoadingCampaigns) {
+    console.log(campaigns[0]);
+    console.log(campaigns[0].amountCollected.toNumber());
+    console.log(campaigns[0].target.toNumber());
+    // console.log(campaigns[0].timeCreated.toNumber());
+
+    // console.log(typeof campaigns[0].deadline.toString());
+    console.log(
+      convertUnixTimestamptoDate(campaigns[0].timeCreated.toNumber() * 1000)
+    );
+    console.log(convertUnixTimestamptoDate(campaigns[0].deadline.toNumber()));
+  }
 
   // useEffect(() => {
   //   if (!isLoadingStatistics) {

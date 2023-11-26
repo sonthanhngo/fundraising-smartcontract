@@ -1,10 +1,18 @@
-import { Controller, Get, Param, Post, Body, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Patch,
+  Delete,
+} from '@nestjs/common';
 import { CampaignService } from './campaign.service';
 @Controller('campaign')
 export class CampaignController {
   constructor(private service: CampaignService) {}
   @Get()
-  async getCampaigns() {
+  getCampaigns() {
     return this.service.getCampaigns();
   }
 
@@ -18,10 +26,11 @@ export class CampaignController {
     return this.service.acceptCampaign(id);
   }
 
-  @Patch(':id/decline')
+  @Delete(':id/decline')
   declineCampaign(@Param('id') id: string) {
     return this.service.declineCampaign(id);
   }
+
   @Get(':id/review')
   getCampaignReviews(@Param('id') id: string) {
     return this.service.getCampaignReviews(id);
@@ -39,6 +48,8 @@ export class CampaignController {
 
   @Post(':id/update')
   createUpdate(@Param('id') id: string, @Body() body) {
+    console.log(body);
+    console.log(id);
     return this.service.createUpdate(id, body);
   }
 }

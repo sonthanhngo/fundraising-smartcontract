@@ -1,5 +1,5 @@
 // export const CONTRACT_ADDRESS = '0x08D94d4949Dd9a45Cc3d74691812d6f53713845b';
-export const CONTRACT_ADDRESS = '0x08D94d4949Dd9a45Cc3d74691812d6f53713845b';
+export const CONTRACT_ADDRESS = '0x1FDE1360267EeFceCdd2F53723162d92B27115Fb';
 export const daysLeft = (deadline) => {
   const difference = new Date(deadline).getTime() - Date.now();
   const remainingDays = difference / (1000 * 3600 * 24);

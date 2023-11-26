@@ -16,9 +16,8 @@ export const SearchBar = ({ campaigns, cancelSearch }) => {
     } else {
       return parsedData.filter(
         (campaign) =>
-          campaign.verified === 2 &&
-          (campaign.title.toLowerCase().includes(input) ||
-            campaign.title.includes(input))
+          campaign.title.toLowerCase().includes(input) ||
+          campaign.title.includes(input)
       );
     }
   };
