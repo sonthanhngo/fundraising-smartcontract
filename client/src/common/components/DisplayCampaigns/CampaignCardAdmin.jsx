@@ -6,6 +6,10 @@ import DoneIcon from '@mui/icons-material/Done';
 import { useState } from 'react';
 import { Loader } from '../misc/Loader';
 import { CONTRACT_ADDRESS } from '../../utils';
+import {
+  useCampaignAcceptMutation,
+  useCampaignDeclineMutation,
+} from '../../../api/campaign';
 export const CampaignCardAdmin = ({ campaign }) => {
   const {
     _id: id,
@@ -16,12 +20,15 @@ export const CampaignCardAdmin = ({ campaign }) => {
     deadline,
     description,
     images,
-
     timeCreated,
   } = campaign;
 
   console.log(campaign);
   const [isLoading, setIsLoading] = useState(false);
+  const [campaignAccept, { isLoading: isLoadingCampaignAccept }] =
+    useCampaignAcceptMutation();
+  const [campaignDecline, { isLoading: isLoadingCampaignDecline }] =
+    useCampaignDeclineMutation();
   return (
     <div>
       {isLoading && <Loader title='confirm your transaction' />}
@@ -80,7 +87,7 @@ export const CampaignCardAdmin = ({ campaign }) => {
           <Web3Button
             contractAddress={CONTRACT_ADDRESS}
             action={async (contract) => {
-              // setIsWaitingTransaction(true);
+              setIsWaitingTransaction(true);
               const tx = await contract.call('createCampaign', [
                 id,
                 owner,
@@ -91,21 +98,26 @@ export const CampaignCardAdmin = ({ campaign }) => {
                 deadline,
                 images,
               ]);
-              // setTxHash(tx.receipt.transactionHash);
-              // setIsWaitingTransaction(false);
-              // setIsLoadingTransactionInfo(true);
-              // setTimeout(() => {
-              //   setIsLoadingTransactionInfo(false);
-              //   navigate('/profile');
-              // }, 5000);
+              const payload = await campaignAccept({ id: id }).unwrap();
+              console.log(payload);
+              setIsWaitingTransaction(false);
             }}
             onError={() => {
-              // setIsWaitingTransaction(false);
-              // window.location.reload();
+              setIsWaitingTransaction(false);
+              window.location.reload();
             }}
           >
             publish campaign
           </Web3Button>
+          <button
+            className='bg-gray-400'
+            onClick={async () => {
+              const payload = await campaignDecline({ id: id }).unwrap();
+              console.log(payload);
+            }}
+          >
+            decline campaign
+          </button>
         </div>
       </div>
     </div>

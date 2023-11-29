@@ -39,7 +39,7 @@ export default function ViewCampaignPage() {
     [campaignId]
   );
   if (!isLoadingCampaign) {
-    console.log(campaign.deadline);
+    console.log(campaign.deadline.toNumber());
   }
   // console.log(campaign.target.toString());
   // wait for transaction to complete in MetaMask
@@ -69,7 +69,7 @@ export default function ViewCampaignPage() {
           {/* container */}
           <div className='flex-col mt-10 '>
             {/* image slider and campaign info */}
-            <div className='flex w-full'>
+            <div className='flex w-full '>
               {/* Image slider */}
               <div className='w-3/5 h-[400px]'>
                 <ImageSlider images={campaign.images} haveDot={true} />
@@ -77,23 +77,27 @@ export default function ViewCampaignPage() {
               {/* Campaign info */}
               <div className='pl-10 w-2/5  flex-col items-end'>
                 <div className='bg-green-700 h-[10px]'></div>
-                <div>
-                  <h3 className='font-bold text-[4rem] text-green-700 '>
-                    {campaign.amountCollected.toString()}
+                <div className='h-1/3 '>
+                  <h3 className='font-bold text-[3rem] text-green-700 '>
+                    đ
+                    {campaign.amountCollected
+                      .toNumber()
+                      .toLocaleString('en-US')}
                   </h3>
                   <h4 className=' text-[1.2rem]'>
                     of target{' '}
                     <span className='font-bold'>
-                      {campaign.target.toNumber()}
-                      {''} VND
+                      đ{campaign.target.toNumber().toLocaleString('en-US')}
                     </span>
                   </h4>
                 </div>
-                <div>
+                <div className='h-1/4'>
                   <h3 className='mt-[40px] font-bold text-[2.4rem]'>
                     {donations.donators.length}
                   </h3>
                   <h4 className=' text-[1.2rem]'>peoples donated</h4>
+                </div>
+                <div className='h-1/4'>
                   <h3 className='mt-[40px] font-bold text-[2.4rem]'>
                     {daysLeft(campaign.deadline.toNumber())} days left
                   </h3>
@@ -117,7 +121,7 @@ export default function ViewCampaignPage() {
             </h2>
 
             {/* Donations history and donate to campaign */}
-            <div className='flex w-full mt-[50px] '>
+            <div className='flex w-full mt-[20px] '>
               {/* Donators history */}
               <div className='w-3/5'>
                 <h3 className='font-semibold text-[2rem]'>latest donators</h3>
@@ -131,20 +135,13 @@ export default function ViewCampaignPage() {
                           rel='noopener noreferrer'
                           className='hover:underline hover:text-blue-600'
                         >
-                          {donator === address ? (
-                            <span className='text-green-700'>{donator}</span>
-                          ) : (
-                            <span>{donator}</span>
-                          )}
+                          <span>{donator}</span>
                         </a>
                         <span className='inline-block float-right font-semibold'>
-                          {convertVND(
-                            ethers.utils.formatEther(
-                              campaign.donations[i].toString()
-                            )
-                          )}
-                          {'  '}
-                          VND
+                          {donations.donations[i]
+                            .toNumber()
+                            .toLocaleString('en-US')}
+                          đ
                         </span>
                       </h4>
                     </li>
@@ -177,7 +174,7 @@ export default function ViewCampaignPage() {
                           setIsWaitingTransaction(true);
                           const tx = await contract.call(
                             'donateToCampaign',
-                            [campaignId],
+                            [campaignId, donateAmount],
                             {
                               value: ethers.utils.parseEther(
                                 convertEthers(donateAmount)
@@ -201,8 +198,7 @@ export default function ViewCampaignPage() {
                     <div className='font-semibold mt-2'>
                       {donateAmount === '' || donateAmount < 100000 ? (
                         <h4 className='text-red-500'>
-                          donation should be larger than 100,000 VND ~ 0.002
-                          ethers.
+                          donation should be larger than đ100,000 ~ ETH0.002 .
                         </h4>
                       ) : (
                         <h4 className=' text-green-700'>

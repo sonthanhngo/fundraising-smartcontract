@@ -1,22 +1,28 @@
 import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/DisplayCampaigns';
 import { useContract, useContractRead, useAddress } from '@thirdweb-dev/react';
-import { CONTRACT_ADDRESS } from '../../../common/utils';
+import { CONTRACT_ADDRESS, getProfileDonations } from '../../../common/utils';
 import { Loader } from '../../../common/components/misc/Loader';
-import DisplayChart from '../DisplayChart';
+import DisplayProfileStatistics from '../components/DisplayProfileStatistics';
 export default function ProfilePage() {
   const address = useAddress();
   const { contract } = useContract(CONTRACT_ADDRESS);
-  const { data: campaigns, isLoading } = useContractRead(
+  const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(
     contract,
     'getCampaigns'
   );
+  const { data: donations, isLoading: isLoadingDonations } = useContractRead(
+    contract,
+    'getDonations'
+  );
   return (
     <div>
-      {isLoading ? (
+      {isLoadingCampaigns && isLoadingDonations ? (
         <Loader title='loading campaigns' />
       ) : (
         <div className='h-[100%] mx-[90px] '>
-          <DisplayChart campaigns={campaigns} />
+          <DisplayProfileStatistics
+            donations={getProfileDonations(donations, address)}
+          />
           <DisplayCampaigns
             campaigns={campaigns}
             title='your campaigns'

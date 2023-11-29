@@ -3,14 +3,16 @@ import { apiSlice } from './slice';
 export const rtkApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     reviewGetById: builder.query({
-      query: (id) => ({ url: `/campaign/${id}/review`, method: 'GET' }),
+      query: (args) => ({ url: `/campaign/${args.id}/review`, method: 'GET' }),
+      providesTags: ['review'],
     }),
     reviewCreateById: builder.mutation({
-      query: (id, review) => ({
-        url: `/campaign/${id}/review`,
+      query: (args) => ({
+        url: `/campaign/${args.id}/review`,
         method: 'POST',
-        body: review,
+        body: args.body,
       }),
+      invalidatesTags: ['review'],
     }),
   }),
 });

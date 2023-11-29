@@ -3,7 +3,8 @@ import { apiSlice } from './slice';
 export const rtkApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     updateGetById: builder.query({
-      query: (id) => ({ url: `/campaign/${id}/update`, method: 'GET' }),
+      query: (args) => ({ url: `/campaign/${args.id}/update`, method: 'GET' }),
+      providesTags: ['update'],
     }),
     updateCreateById: builder.mutation({
       query: (args) => ({
@@ -11,6 +12,7 @@ export const rtkApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: args.body,
       }),
+      invalidatesTags: ['update'],
     }),
   }),
 });

@@ -1,4 +1,4 @@
-const parsedCampaigns = (campaigns, type, address) => {
+const parsedCampaigns = (campaigns) => {
   const parsedData = campaigns.map((campaign, i) => ({
     owner: campaign.owner,
     ownerName: campaign.ownerName,
@@ -17,4 +17,8 @@ const parsedCampaigns = (campaigns, type, address) => {
   const sortedCampaigns = tempCampaigns.sort(
     (a, b) => b.timeCreated - a.timeCreated
   );
+};
+
+export const formatVND = (VND) => {
+  return VND.toNumber().toLocaleString('en-US');
 };

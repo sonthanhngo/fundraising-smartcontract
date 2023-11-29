@@ -12,6 +12,7 @@ export const rtkApi = apiSlice.injectEndpoints({
         }));
         return parsedRes;
       },
+      providesTags: ['campaigns'],
     }),
     campaignCreate: builder.mutation({
       query: (args) => ({
@@ -19,18 +20,21 @@ export const rtkApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: args.body,
       }),
+      invalidatesTags: ['campaigns'],
     }),
     campaignAccept: builder.mutation({
-      query: (id) => ({
-        url: `/campaign/${id}/accept`,
+      query: (args) => ({
+        url: `/campaign/${args.id}/accept`,
         method: 'PATCH',
       }),
+      invalidatesTags: ['campaigns'],
     }),
     campaignDecline: builder.mutation({
-      query: (id) => ({
-        url: `/campaign/${id}/decline`,
-        method: 'PATCH',
+      query: (args) => ({
+        url: `/campaign/${args.id}/decline`,
+        method: 'DELETE',
       }),
+      invalidatesTags: ['campaigns'],
     }),
   }),
 });

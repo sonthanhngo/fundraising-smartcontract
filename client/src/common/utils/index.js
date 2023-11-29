@@ -37,3 +37,56 @@ export const convertUnixTimestamptoDate = (unixTimestamp) => {
   });
   return formatter.format(date);
 };
+export const getTotalDonations = (donations) => {
+  let totalDonations = 0;
+  let totalDonators = 0;
+  donations.forEach((donation) => {
+    totalDonators += donation.donations.length;
+    donation.donations.forEach(
+      (donation) => (totalDonations += donation.toNumber())
+    );
+  });
+  return { totalDonations, totalDonators };
+};
+export const getProfileDonations = (donations, address) => {
+  return donations.filter((donation) => donation.owner === address);
+};
+
+export const formatChartData = (donations) => {
+  // return donations.map((donation) => ({
+  //   donationsTime: donation.donationsTime.map((time) =>
+  //     new Date(time.toNumber() * 1000).getDate()
+  //   ),
+  //   donations: donation.donations.map((donationAmount) =>
+  //     donationAmount.toNumber()
+  //   ),
+  // }));
+  const mydonations = donations.map((donation) => ({
+    donationsTime: donation.donationsTime.map(
+      (time) =>
+        `${new Date(time.toNumber() * 1000).toLocaleDateString('en-GB')}`
+    ),
+    donations: donation.donations.map((donationAmount) =>
+      donationAmount.toNumber()
+    ),
+  }));
+
+  const summedDonations = {};
+
+  mydonations.forEach((item) => {
+    item.donations.forEach((donation, i) => {
+      if (!summedDonations[item.donationsTime[i]]) {
+        summedDonations[item.donationsTime[i]] = 0;
+      }
+
+      summedDonations[item.donationsTime[i]] += donation;
+    });
+  });
+
+  const result = Object.keys(summedDonations).map((date) => ({
+    donation: summedDonations[date],
+    donationsTime: date,
+  }));
+
+  return result;
+};

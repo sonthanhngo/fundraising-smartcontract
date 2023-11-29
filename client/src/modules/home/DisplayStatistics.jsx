@@ -13,7 +13,7 @@ export const DisplayStatistics = ({ statistics }) => {
           </li>
           <li className='w-full h-full  border-y-[0.2rem] p-[20px]'>
             <h1 className='text-[2.4rem] font-semibold text-green-700'>
-              {convertVND(ethers.utils.formatEther(statistics[1].toString()))}
+              {statistics[1].toNumber().toLocaleString('en-US')}
             </h1>
             <h2 className='text-[1.2rem]'>VND has sent</h2>
           </li>

@@ -49,7 +49,7 @@ contract Fundraising {
         return (totalCampaigns,totalDonations,totalDonators);
     }
     // Create campaign
-    function createCampaign(string memory _id, address _address, string memory _ownerName, string memory _title, string memory _description, uint256 _target, uint256 _deadline, string[] memory _images) public {
+    function createCampaign(string memory _id, address _address, string memory _ownerName, string memory _title, string memory _description, uint256 _target, uint256 _timeCreated, uint256 _deadline, string[] memory _images) public {
         Campaign storage campaign = campaigns[totalCampaigns];
 
         campaign.id = _id;
@@ -58,7 +58,7 @@ contract Fundraising {
         campaign.title = _title;
         campaign.description = _description;
         campaign.target = _target;
-        campaign.timeCreated = block.timestamp;
+        campaign.timeCreated = _timeCreated;
         campaign.deadline = _deadline;
         campaign.amountCollected = 0;
         for(uint i = 0; i < _images.length; i++) {

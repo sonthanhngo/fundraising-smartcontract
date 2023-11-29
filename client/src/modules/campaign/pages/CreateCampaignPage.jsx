@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Web3Button, useAddress, useStorageUpload } from '@thirdweb-dev/react';
 import { ethers } from 'ethers';
-import { convertVND, convertEthers } from '../../../common/utils';
+import {
+  convertVND,
+  convertEthers,
+  convertUnixTimestamptoDate,
+} from '../../../common/utils';
 import ImageIcon from '@mui/icons-material/Image';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
 import { Loader } from '../../../common/components/misc/Loader';
@@ -13,13 +17,6 @@ export default function CreateCampaignPage() {
   const address = useAddress();
   const navigate = useNavigate();
   // target value
-  // waiting for transaction execute in MetaMask
-  const [isWaitingTransaction, setIsWaitingTransaction] = useState(false);
-  // transaction hash
-  const [txHash, setTxHash] = useState('');
-  // display transaction info
-  const [isLoadingTransactionInfo, setIsLoadingTransactionInfo] =
-    useState(false);
   // form data
   const [form, setForm] = useState({
     ownerName: '',
@@ -38,8 +35,8 @@ export default function CreateCampaignPage() {
         setForm({ ...form, [fieldName]: e });
     }
   };
-  console.log(ethers.utils.parseEther(convertEthers(form.target)));
-  const [campaignCreate] = useCampaignCreateMutation();
+  const [campaignCreate, { isSuccess }] = useCampaignCreateMutation();
+  console.log(isSuccess);
   // storage upload
   const { mutateAsync: upload } = useStorageUpload();
   const uploader = async (files) => {
@@ -60,17 +57,10 @@ export default function CreateCampaignPage() {
   };
   // temporary image file for preview
   const [imgFiles, setImgFiles] = useState([]);
-  console.log(form);
 
   return (
     <div>
       {/* container */}
-      {isWaitingTransaction && (
-        <Loader title='please confirm transaction on MetaMask' />
-      )}
-      {isLoadingTransactionInfo && (
-        <Loader title='see your transaction ' transactionHash={txHash} />
-      )}
       <div className='mx-[90px]'>
         {/* Title */}
         <h1 className='text-[2.4rem] font-bold text-green-700'>
@@ -175,9 +165,12 @@ export default function CreateCampaignPage() {
             </div>
             {/* create campaign button */}
             <button
-              onClick={() =>
-                campaignCreate({ body: { ...form, owner: address } })
-              }
+              onClick={async () => {
+                const payload = await campaignCreate({
+                  body: { ...form, owner: address },
+                }).unwrap();
+                console.log(payload);
+              }}
               className='mt-10'
             >
               Create

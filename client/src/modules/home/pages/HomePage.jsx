@@ -18,6 +18,7 @@ export default function HomePage() {
     'getStatistics'
   );
   if (!isLoadingCampaigns) {
+    console.log(statistics);
     console.log(campaigns[0]);
     console.log(campaigns[0].amountCollected.toNumber());
     console.log(campaigns[0].target.toNumber());
