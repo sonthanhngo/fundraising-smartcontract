@@ -38,6 +38,8 @@ export class CampaignController {
 
   @Post(':id/review')
   createReview(@Param('id') id: string, @Body() body) {
+    console.log(body);
+    console.log(id);
     return this.service.createReview(id, body);
   }
 

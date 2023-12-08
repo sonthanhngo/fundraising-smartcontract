@@ -22,7 +22,7 @@ export default function CreateCampaignPage() {
     ownerName: '',
     title: '',
     description: '',
-    target: 10000000,
+    target: '10000000',
     deadline: '',
     images: [],
   });
@@ -36,6 +36,7 @@ export default function CreateCampaignPage() {
     }
   };
   const [campaignCreate, { isSuccess }] = useCampaignCreateMutation();
+  console.log(isSuccess);
   // storage upload
   const { mutateAsync: upload } = useStorageUpload();
   const uploader = async (files) => {
@@ -56,10 +57,9 @@ export default function CreateCampaignPage() {
   };
   // temporary image file for preview
   const [imgFiles, setImgFiles] = useState([]);
-  const [isWaitingTransaction, setIsWaitingTransaction] = useState(false);
+
   return (
     <div>
-      {isWaitingTransaction && <Loader title='success' />}
       {/* container */}
       <div className='mx-[90px]'>
         {/* Title */}
@@ -116,28 +116,23 @@ export default function CreateCampaignPage() {
                   type='text'
                   pattern='[0-9]*[.]?[0-9]*'
                   className=' w-[100%] h-[50px] px-3 focus:outline-none '
-                  value={form.target.toLocaleString()}
+                  value={form.target}
                   onChange={(e) => {
-                    if (e.target.value === '') {
-                      handleFormFieldChange('target', 0);
-                    } else {
-                      handleFormFieldChange(
-                        'target',
-                        parseInt(e.target.value.replace(/,/g, ''))
-                      );
-                    }
+                    handleFormFieldChange('target', e.target.value);
                   }}
                 />
                 <div className='pr-2'>đ</div>
               </div>
             </li>
-            <h3 className='text-[1.2rem]'>
-              that would be
-              <span className='text-red-500 font-semibold'>
-                {' '}
-                {convertEthers(form.target)} ethers.
-              </span>
-            </h3>
+            {form.target !== 0 && (
+              <h3 className='text-[1.2rem]'>
+                that would be
+                <span className='text-red-500 font-semibold'>
+                  {' '}
+                  {convertEthers(form.target)} ethers.
+                </span>
+              </h3>
+            )}
           </ul>
           {/* right side */}
           <div className='w-3/5 mt-5'>
@@ -171,47 +166,15 @@ export default function CreateCampaignPage() {
             {/* create campaign button */}
             <button
               onClick={async () => {
-                setIsWaitingTransaction(true);
                 const payload = await campaignCreate({
                   body: { ...form, owner: address },
                 }).unwrap();
-                setTimeout(() => {
-                  setIsWaitingTransaction(false);
-                  window.location.reload();
-                }, 3000);
+                console.log(payload);
               }}
-              className='text-[1.2rem] mt-[240px] ml-[500px] min-w-[100px] h-[50px] rounded-lg bg-gray-200'
+              className='mt-10'
             >
               Create
             </button>
-            {/* <Web3Button
-              contractAddress={CONTRACT_ADDRESS}
-              action={async (contract) => {
-                setIsWaitingTransaction(true);
-                const tx = await contract.call('createCampaign', [
-                  form.ownerName,
-                  form.title,
-                  form.description,
-                  form.target,
-                  form.deadline,
-                  form.images,
-                ]);
-                setTxHash(tx.receipt.transactionHash);
-                setIsWaitingTransaction(false);
-                setIsLoadingTransactionInfo(true);
-                setTimeout(() => {
-                  setIsLoadingTransactionInfo(false);
-                  navigate('/profile');
-                }, 5000);
-              }}
-              onError={() => {
-                setIsWaitingTransaction(false);
-                window.location.reload();
-              }}
-              className='!text-[1.2rem] !mt-[240px] !ml-[500px] !min-w-[50px] !bg-white'
-            >
-              publish
-            </Web3Button> */}
           </div>
         </div>
       </div>

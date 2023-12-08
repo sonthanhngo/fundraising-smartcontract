@@ -1,4 +1,10 @@
-import { IsArray, ArrayMinSize, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  ArrayMinSize,
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+} from 'class-validator';
 
 export class CampaignDto {
   @IsString()
@@ -17,9 +23,9 @@ export class CampaignDto {
   @IsNotEmpty()
   description: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  target: string;
+  target: number;
 
   @IsString()
   @IsNotEmpty()

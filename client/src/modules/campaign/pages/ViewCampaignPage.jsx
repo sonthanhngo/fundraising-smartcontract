@@ -17,6 +17,10 @@ import { useState } from 'react';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
 import SendIcon from '@mui/icons-material/Send';
 import { Loader } from '../../../common/components/misc/Loader';
+import CampaignReviews from '../CampaignReviews';
+import CampaignUpdates from '../CampaignUpdates';
+import CreateUpdate from './ViewCampaignPage/components/CreateUpdate';
+import CreateReview from './ViewCampaignPage/components/CreateReview';
 
 export default function ViewCampaignPage() {
   // donate amount
@@ -39,7 +43,7 @@ export default function ViewCampaignPage() {
     [campaignId]
   );
   if (!isLoadingCampaign) {
-    console.log(campaign.deadline.toNumber());
+    console.log(campaign);
   }
   // console.log(campaign.target.toString());
   // wait for transaction to complete in MetaMask
@@ -49,12 +53,23 @@ export default function ViewCampaignPage() {
   // display tranaction info
   const [isLoadingTransactionInfo, setIsLoadingTransactionInfo] =
     useState(false);
+  const [isCreatingReview, setIsCreatingReview] = useState(false);
+  const [isCreatingUpdate, setIsCreatingUpdate] = useState(false);
   return (
     <div className='mx-[90px]'>
       {isLoadingCampaign ? (
         <Loader title='loading campaign' />
       ) : (
         <div>
+          {isCreatingReview && (
+            <CreateReview id={campaign.id} amount={donateAmount} />
+          )}
+          {isCreatingUpdate && (
+            <CreateUpdate
+              id={campaign.id}
+              setIsCreating={setIsCreatingUpdate}
+            />
+          )}
           {isWaitingTransaction && (
             <Loader title='please confirm transaction on MetaMask' />
           )}
@@ -64,10 +79,17 @@ export default function ViewCampaignPage() {
           {/* title and description */}
           <h1 className=' font-bold text-[2.4rem] text-green-700'>
             {campaign.title}
+            <button
+              className='float-right'
+              onClick={() => setIsCreatingUpdate(true)}
+            >
+              update
+            </button>
           </h1>
+
           <h2 className=' my-5 text-[1.2rem]'>{campaign.description}</h2>
           {/* container */}
-          <div className='flex-col mt-10 '>
+          <div className='flex-col mt-10 h-[80vh]'>
             {/* image slider and campaign info */}
             <div className='flex w-full '>
               {/* Image slider */}
@@ -110,15 +132,18 @@ export default function ViewCampaignPage() {
                   </h4>
                 </div>
               </div>
+              {/* campaign info */}
             </div>
 
             {/* campaign owner and address */}
             <h2 className='text-[1rem] font-semibold mt-2'>
-              by <span className='text-green-700'>{campaign.ownerName}</span>
+              by <span className='text-green-700'>{campaign.ownerName}</span> is
+              organizing this fundraise
             </h2>
             <h2 className='text-[1rem] font-bold px-6'>
               <span className='text-green-700'>{campaign.owner}</span>
             </h2>
+            {/* campaign owner and address */}
 
             {/* Donations history and donate to campaign */}
             <div className='flex w-full mt-[20px] '>
@@ -163,9 +188,16 @@ export default function ViewCampaignPage() {
                         type='text'
                         className='border-2 rounded-md w-4/5 px-3  '
                         placeholder='Enter your amount'
-                        value={donateAmount}
+                        value={donateAmount.toLocaleString()}
                         onChange={(e) => {
                           setDonateAmount(e.target.value);
+                          if (e.target.value === '') {
+                            setDonateAmount(0);
+                          } else {
+                            setDonateAmount(
+                              parseInt(e.target.value.replace(/,/g, ''))
+                            );
+                          }
                         }}
                       />
                       <Web3Button
@@ -187,6 +219,7 @@ export default function ViewCampaignPage() {
                           setTimeout(() => {
                             setIsLoadingTransactionInfo(false);
                           }, 5000);
+                          setIsCreatingReview(true);
                         }}
                         onError={() => setIsWaitingTransaction(false)}
                         className='!w-1/5 !min-w-[10px] justify-end !bg-white '
@@ -197,8 +230,8 @@ export default function ViewCampaignPage() {
                     {/* Warning */}
                     <div className='font-semibold mt-2'>
                       {donateAmount === '' || donateAmount < 100000 ? (
-                        <h4 className='text-red-500'>
-                          donation should be larger than đ100,000 ~ ETH0.002 .
+                        <h4 className='text-red-500 '>
+                          donation must larger than đ100,000
                         </h4>
                       ) : (
                         <h4 className=' text-green-700'>
@@ -209,6 +242,16 @@ export default function ViewCampaignPage() {
                   </div>
                 )}
               </div>
+            </div>
+          </div>
+          <div className='flex'>
+            <div className='w-3/5 '>
+              <h1 className='font-semibold text-[2rem]'>recent reviews</h1>
+              <CampaignReviews id={campaign.id} />
+            </div>
+            <div className='w-2/5 pl-10'>
+              <h1 className='font-semibold text-[2rem]'>recent updates</h1>
+              <CampaignUpdates id={campaign.id} />
             </div>
           </div>
         </div>

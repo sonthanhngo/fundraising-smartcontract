@@ -15,7 +15,7 @@ export default function AdminPage() {
   const { data: campaigns, isLoading } = useCampaignGetAllQuery();
 
   return (
-    <div>
+    <div className='h-[100%] mx-[90px] mt-6'>
       {/* {address !== ADMIN_ADDRESS ? (
         <Loader title='not admin, prohibited' />
       ) : (
@@ -31,7 +31,16 @@ export default function AdminPage() {
           )}
         </div>
       )} */}
-      {!isLoading && <Pagination campaigns={campaigns} isAdmin={true} />}
+      {isLoading ? (
+        <Loader title='loading campaigns' />
+      ) : (
+        <DisplayCampaigns
+          campaigns={campaigns}
+          type='admin'
+          address={address}
+          title='admin'
+        />
+      )}
     </div>
   );
 }

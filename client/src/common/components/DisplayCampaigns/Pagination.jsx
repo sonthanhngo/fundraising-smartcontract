@@ -17,7 +17,7 @@ export const Pagination = ({ campaigns, isAdmin }) => {
     return campaigns.slice(lowerPageRange(page), upperPageRange(page));
   };
   return (
-    <div className=' w-full relative group'>
+    <div className=' w-full relative group mb-5'>
       {isAdmin ? (
         <div className=''>
           {pageElement(currentPage).map((element, id) => (

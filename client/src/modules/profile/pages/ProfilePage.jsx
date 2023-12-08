@@ -29,12 +29,12 @@ export default function ProfilePage() {
             type='userCampaign'
             address={address}
           />
-          <DisplayCampaigns
+          {/* <DisplayCampaigns
             campaigns={campaigns}
             title='your donated campaigns'
             type='userDonatedCampaign'
             address={address}
-          />
+          /> */}
         </div>
       )}
     </div>

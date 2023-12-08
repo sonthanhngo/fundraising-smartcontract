@@ -14,8 +14,8 @@ export class Review {
 
 @Schema({ _id: false })
 export class Update {
-  @Prop({ type: Date })
-  date: Date;
+  @Prop()
+  date: string;
 
   @Prop()
   update: string;
@@ -39,7 +39,7 @@ export class Campaign {
   description: string;
 
   @Prop()
-  target: string;
+  target: number;
 
   @Prop()
   deadline: string;

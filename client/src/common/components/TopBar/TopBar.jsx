@@ -53,6 +53,7 @@ export const TopBar = () => {
                   primaryButtonText: '#000000',
                   borderColor: '#ffffff',
                   dropdownBg: '#ffffff',
+                  modalBg: '#ffffff',
                 },
               }}
               hideTestnetFaucet={true}
@@ -60,6 +61,7 @@ export const TopBar = () => {
               modalSize={'compact'}
               welcomeScreen={{}}
               modalTitleIconUrl={''}
+              btnTitle='connect wallet'
               className=' hover:text-green-700 !min-h-[70px]'
             />
           </div>

@@ -19,29 +19,24 @@ export const DisplayCampaigns = ({ title, campaigns, type, address }) => {
     const sortedCampaigns = tempCampaigns.sort(
       (a, b) => b.timeCreated - a.timeCreated
     );
-    if (type === 'admin') {
-      return sortedCampaigns.filter((campaign) => campaign.verified === 1);
-    } else if (type === 'home') {
+
+    if (type === 'home') {
       return sortedCampaigns;
     } else if (type === 'userCampaign') {
-      return sortedCampaigns.filter(
-        (campaign) => campaign.owner === address && campaign.verified !== 0
-      );
-    } else if (type === 'userDonatedCampaign') {
-      return sortedCampaigns.filter(
-        (campaign) =>
-          campaign.donators !== undefined && campaign.donators.includes(address)
-      );
+      return sortedCampaigns.filter((campaign) => campaign.owner === address);
     }
+    // } else if (type === 'userDonatedCampaign') {
+    //   return sortedCampaigns.filter(
+    //     (campaign) =>
+    //       campaign.donators !== undefined && campaign.donators.includes(address)
+    //   );
+    // }
   };
   return (
     <div className=''>
       <h1 className='text-[2.4rem] font-bold text-green-700 my-5'>{title}</h1>
       {type === 'admin' ? (
-        <Pagination
-          campaigns={parsedCampaigns(campaigns, type, address)}
-          isAdmin={true}
-        />
+        <Pagination campaigns={campaigns} isAdmin={true} />
       ) : (
         <Pagination campaigns={parsedCampaigns(campaigns, type, address)} />
       )}
