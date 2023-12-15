@@ -1,0 +1,17 @@
+{
+  "name": "thesis",
+  "version": "1.0.0",
+  "description": "fundraising platform using smartcontract",
+  "repository": "https://github.com/sonthanhngo/thesis.git",
+  "author": "sonthanhngo <ngothanhson123456@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "./client",
+    "./server"
+  ],
+  "scripts": {
+    "client dev": "yarn workspace client dev",
+    "server:dev": "yarn workspace server start:dev"
+  }
+}

@@ -1,2 +1,3 @@
 import { CampaignModule } from './campaign/campaign.module';
-export const ResourcesModule = [CampaignModule];
+import { MessageModule } from './message/message.module';
+export const ResourcesModule = [CampaignModule, MessageModule];
