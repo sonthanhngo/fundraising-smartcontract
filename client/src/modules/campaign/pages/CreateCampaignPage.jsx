@@ -7,7 +7,6 @@ import {
   convertEthers,
   convertUnixTimestamptoDate,
 } from '../../../common/utils';
-import ImageIcon from '@mui/icons-material/Image';
 import { ImageSlider } from '../../../common/components/misc/ImageSlider';
 import { Loader } from '../../../common/components/misc/Loader';
 import { CONTRACT_ADDRESS } from '../../../common/utils';
@@ -23,36 +22,37 @@ export default function CreateCampaignPage() {
     title: '',
     description: '',
     target: 10000000,
-    deadline: '',
+    deadline: Date.now(),
     images: [],
   });
   const handleFormFieldChange = (fieldName, e) => {
     switch (fieldName) {
       case 'deadline':
+        console.log(typeof e);
         setForm({ ...form, deadline: new Date(e).getTime() });
         break;
+      case 'images':
+        handleUpload(e).then((imageURLs) =>
+          setForm({ ...form, images: imageURLs })
+        );
+        break;
       default:
-        setForm({ ...form, [fieldName]: e });
+        setForm({ ...form, fieldName: e });
     }
   };
+  console.log(form);
   const [campaignCreate, { isSuccess }] = useCampaignCreateMutation();
   // storage upload
-  const { mutateAsync: upload } = useStorageUpload();
-  const uploader = async (files) => {
+  const { mutateAsync: uploadToIPFS } = useStorageUpload();
+  const handleUpload = async (files) => {
     const myFiles = Array.from(files);
-    await uploadToIPFS(myFiles);
-  };
-  const uploadToIPFS = async (files) => {
-    const uploadURLs = await upload({
-      data: files,
+    const uploadURLs = await uploadToIPFS({
+      data: myFiles,
     });
     const parsedURLs = uploadURLs.map((uploadURL) =>
       uploadURL.replace('ipfs://', 'https://ipfs.io/ipfs/')
     );
-    setForm({
-      ...form,
-      ['images']: parsedURLs,
-    });
+    return parsedURLs;
   };
   // temporary image file for preview
   const [imgFiles, setImgFiles] = useState([]);
@@ -103,6 +103,7 @@ export default function CreateCampaignPage() {
               <h3 className='font-semibold '>deadline of this campaign?</h3>
               <input
                 type='date'
+                value={new Date(form.deadline)}
                 className='border-2 rounded-md w-[100%] h-[50px] px-5 focus:outline-none'
                 onChange={(e) =>
                   handleFormFieldChange('deadline', e.target.value)
@@ -151,18 +152,32 @@ export default function CreateCampaignPage() {
                     type='file'
                     multiple
                     className='h-full w-full absolute cursor-pointer opacity-0'
-                    onChange={async (e) => {
+                    onChange={(e) => {
                       Array.from(e.target.files).forEach((file) => {
                         setImgFiles((imgFile) => [
                           ...imgFile,
                           URL.createObjectURL(file),
                         ]);
                       });
-                      await uploader(e.target.files);
+                      handleFormFieldChange('images', e.target.files);
                     }}
                   />
                   <div className='w-full h-full absolute flex flex-col items-center justify-center z-[-1] font-semibold text-[1.2rem]'>
-                    <ImageIcon />
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='w-6 h-6'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z'
+                      />
+                    </svg>
+
                     <h4>upload images for this campaign</h4>
                   </div>
                 </div>
@@ -177,7 +192,7 @@ export default function CreateCampaignPage() {
                 }).unwrap();
                 setTimeout(() => {
                   setIsWaitingTransaction(false);
-                  window.location.reload();
+                  navigate('/');
                 }, 3000);
               }}
               className='text-[1.2rem] mt-[240px] ml-[500px] min-w-[100px] h-[50px] rounded-lg bg-gray-200'

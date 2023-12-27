@@ -6,8 +6,12 @@ import {
   Body,
   Patch,
   Delete,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CampaignService } from './campaign.service';
+import { CampaignDto } from './dtos/campaign.dto';
+import { UpdateDto } from './dtos/update.dto';
+import { ReviewDto } from './dtos/review.dto';
 @Controller('campaign')
 export class CampaignController {
   constructor(private service: CampaignService) {}
@@ -17,8 +21,8 @@ export class CampaignController {
   }
 
   @Post()
-  createCampaign(@Body() body) {
-    return this.service.createCampaign(body);
+  createCampaign(@Body(new ValidationPipe()) campaignDto: CampaignDto) {
+    return this.service.createCampaign(campaignDto);
   }
 
   @Patch(':id/accept')
@@ -37,10 +41,11 @@ export class CampaignController {
   }
 
   @Post(':id/review')
-  createReview(@Param('id') id: string, @Body() body) {
-    console.log(body);
-    console.log(id);
-    return this.service.createReview(id, body);
+  createReview(
+    @Param('id') id: string,
+    @Body(new ValidationPipe()) reviewDto: ReviewDto,
+  ) {
+    return this.service.createReview(id, reviewDto);
   }
 
   @Get(':id/update')
@@ -49,9 +54,10 @@ export class CampaignController {
   }
 
   @Post(':id/update')
-  createUpdate(@Param('id') id: string, @Body() body) {
-    console.log(body);
-    console.log(id);
-    return this.service.createUpdate(id, body);
+  createUpdate(
+    @Param('id') id: string,
+    @Body(new ValidationPipe()) updateDto: UpdateDto,
+  ) {
+    return this.service.createUpdate(id, updateDto);
   }
 }

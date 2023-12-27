@@ -9,12 +9,12 @@ contract Fundraising {
         admin = msg.sender;
     }
 
-    // modifier onlyAdmin(){
-    //     require(msg.sender == admin);
-    //     _;
-    // }
-    // Contract data
+    modifier onlyAdmin(){
+        require(msg.sender == admin);
+        _;
+    }
 
+    // Contract data
     struct Campaign {
         string id;
         address owner;
@@ -35,23 +35,26 @@ contract Fundraising {
         uint256[] donationsTime;
     }
 
-
+    mapping(string => uint256) private campaignsMap;
     mapping(uint256 => Campaign) private campaigns;
     mapping(uint256 => Donation) private donations;
 
     // Contract statistics
-    uint256 private totalCampaigns = 0;
+    // totalCampaigns is 1 because i use this to access to mapping, and 0 is set for undefined which i can't use it.
+    uint256 private totalCampaigns = 1;
     uint256 private totalDonations = 0;
     uint256 private totalDonators = 0; 
 
     // Get contract statistics
     function getStatistics() public view returns (uint256 ,uint256,uint256){
-        return (totalCampaigns,totalDonations,totalDonators);
+        return (totalCampaigns - 1,totalDonations,totalDonators);
     }
     // Create campaign
-    function createCampaign(string memory _id, address _address, string memory _ownerName, string memory _title, string memory _description, uint256 _target, uint256 _timeCreated, uint256 _deadline, string[] memory _images) public {
-        Campaign storage campaign = campaigns[totalCampaigns];
+    function createCampaign(string memory _id, address _address, string memory _ownerName, string memory _title, string memory _description, uint256 _target, uint256 _timeCreated, uint256 _deadline, string[] memory _images) public onlyAdmin{
+        campaignsMap[_id] = totalCampaigns;
 
+        Campaign storage campaign = campaigns[totalCampaigns];
+        
         campaign.id = _id;
         campaign.owner = _address;
         campaign.ownerName = _ownerName;
@@ -67,52 +70,56 @@ contract Fundraising {
 
         Donation storage donation = donations[totalCampaigns];
         donation.owner = _address;
-
         totalCampaigns = totalCampaigns + 1;   
     }
 
 
-    function donateToCampaign(uint256 _id,uint256 _amount) public payable {
-        uint256 amount = _amount;    
-        Campaign storage campaign = campaigns[_id];
-        Donation storage donation = donations[_id];
+    function donateToCampaign(string memory _id,uint256 _amount, uint256 _donationTime) public payable {
+        uint256 campaignId = campaignsMap[_id];
+        require(campaignId !=0, "Campaign not found!");
+        Campaign storage campaign = campaigns[campaignId];
+        Donation storage donation = donations[campaignId];
 
         (bool sent,) = payable(campaign.owner).call{value: msg.value}("");
 
         if(sent) {
-            campaign.amountCollected = campaign.amountCollected + amount;
-            totalDonations = totalDonations + amount;
+            campaign.amountCollected = campaign.amountCollected + _amount;
+            totalDonations = totalDonations + _amount;
             totalDonators = totalDonators + 1;
             donation.donators.push(msg.sender);
-            donation.donations.push(amount);
-            donation.donationsTime.push(block.timestamp);
+            donation.donations.push(_amount);
+            donation.donationsTime.push(_donationTime);
         }
     }
 
     function getCampaigns() public view returns (Campaign[] memory) {
-        Campaign[] memory allCampaigns = new Campaign[](totalCampaigns);
-        for(uint i = 0; i < totalCampaigns; i++) {
+        Campaign[] memory allCampaigns = new Campaign[](totalCampaigns - 1);
+        for(uint i = 1; i < totalCampaigns; i++) {
             Campaign storage campaign = campaigns[i];
-            allCampaigns[i] = campaign;
+            allCampaigns[i-1] = campaign;
         }
         return allCampaigns;
     }
 
     function getDonations() public view returns (Donation[] memory) {
-        Donation[] memory allDonations = new Donation[](totalCampaigns);
-        for(uint i = 0; i < totalCampaigns; i++) {
+        Donation[] memory allDonations = new Donation[](totalCampaigns - 1);
+        for(uint i = 1; i < totalCampaigns; i++) {
             Donation storage donation = donations[i];
-            allDonations[i] = donation;
+            allDonations[i-1] = donation;
         }
         return allDonations;
     }
     
-    function getCampaignById(uint256 _id) public view returns (Campaign memory) {
-        return campaigns[_id];
+    function getCampaignById(string memory _id) public view returns (Campaign memory) {
+        uint256 campaignId = campaignsMap[_id];
+        require(campaignId != 0, "Campaign not found!");
+        return campaigns[campaignId];
     }
 
-    function getDonationById(uint256 _id) public view returns (Donation memory) {
-        return donations[_id];
+    function getDonationById(string memory _id) public view returns (Donation memory) {
+        uint256 campaignId = campaignsMap[_id];
+        require(campaignId != 0, "Campaign not found!");
+        return donations[campaignId];
     }
 
 }

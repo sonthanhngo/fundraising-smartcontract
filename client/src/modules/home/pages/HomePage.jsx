@@ -9,28 +9,28 @@ import {
 import { ContractFactory } from 'ethers';
 export default function HomePage() {
   const { contract } = useContract(CONTRACT_ADDRESS);
-  const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(
-    contract,
-    'getCampaigns'
-  );
   const { data: statistics, isLoading: isLoadingStatistics } = useContractRead(
     contract,
     'getStatistics'
   );
-  if (!isLoadingCampaigns) {
+  const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(
+    contract,
+    'getCampaigns'
+  );
+
+  if (!isLoadingCampaigns && !isLoadingStatistics) {
     console.log(statistics);
-    console.log(campaigns[0]);
-    console.log(campaigns[0].amountCollected.toNumber());
-    console.log(campaigns[0].target.toNumber());
+    // console.log(campaigns[0]);
+    // console.log(campaigns[0].amountCollected.toNumber());
+    // console.log(campaigns[0].target.toNumber());
     // console.log(campaigns[0].timeCreated.toNumber());
 
     // console.log(typeof campaigns[0].deadline.toString());
-    console.log(
-      convertUnixTimestamptoDate(campaigns[0].timeCreated.toNumber() * 1000)
-    );
-    console.log(convertUnixTimestamptoDate(campaigns[0].deadline.toNumber()));
+    console.log(campaigns);
   }
+  console.log('Loading campaigns: ' + isLoadingCampaigns);
 
+  console.log('Loading statistics: ' + isLoadingStatistics);
   // useEffect(() => {
   //   if (!isLoadingStatistics) {
   //     console.log(statistics);

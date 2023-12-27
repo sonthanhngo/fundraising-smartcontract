@@ -27,9 +27,9 @@ export class CampaignDto {
   @IsNotEmpty()
   target: number;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  deadline: string;
+  deadline: number;
 
   @IsArray()
   @IsString({ each: true })

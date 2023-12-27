@@ -2,7 +2,6 @@
 import { convertUnixTimestamptoDate, daysLeft } from '../../utils';
 import { ImageSlider } from '../misc/ImageSlider';
 import { Web3Button } from '@thirdweb-dev/react';
-import DoneIcon from '@mui/icons-material/Done';
 import { useState, useRef } from 'react';
 import { Loader } from '../misc/Loader';
 import { CONTRACT_ADDRESS } from '../../utils';
@@ -23,8 +22,10 @@ export const CampaignCardAdmin = ({ campaign }) => {
     timeCreated,
   } = campaign;
 
-  console.log(campaign);
-  const buttonRef = useRef();
+  const web3refRef = useRef();
+  const handleClick = () => {
+    web3refRef.current.click();
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [campaignAccept, { isLoading: isLoadingCampaignAccept }] =
     useCampaignAcceptMutation();
@@ -93,9 +94,11 @@ export const CampaignCardAdmin = ({ campaign }) => {
               window.location.reload();
             }}
             className='!my-10'
+            innerRef={web3refRef}
           >
             publish campaign
           </Web3Button>
+          <button onClick={handleClick}>click me</button>
           <button
             className='bg-gray-200 h-[50px] w-[155px] font-semibold rounded-lg'
             onClick={async () => {

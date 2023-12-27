@@ -18,7 +18,7 @@ import {
 export default function DisplayChart({ donations }) {
   console.log(formatChartData(donations));
   return (
-    <div className='w-3/5'>
+    <div className='w-3/4 '>
       <ResponsiveContainer width='100%' height={350}>
         <BarChart data={formatChartData(donations)}>
           <XAxis

@@ -1,9 +1,4 @@
 import { useState } from 'react';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import CircleIcon from '@mui/icons-material/Circle';
-import { green } from '@mui/material/colors';
-
 export const ImageSlider = ({ images, haveDot }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -30,11 +25,39 @@ export const ImageSlider = ({ images, haveDot }) => {
       ></img>
       {/* Left Arrow */}
       <div className='hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] left-5  text-green-700 cursor-pointer'>
-        <ArrowLeftIcon onClick={prevSlide} />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          strokeWidth={1.5}
+          stroke='currentColor'
+          className='w-6 h-6'
+          onClick={prevSlide}
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M15.75 19.5L8.25 12l7.5-7.5'
+          />
+        </svg>
       </div>
       {/* Right Arrow */}
       <div className='hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5  text-green-700 cursor-pointer'>
-        <ArrowRightIcon onClick={nextSlide} />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          strokeWidth={1.5}
+          stroke='currentColor'
+          className='w-6 h-6'
+          onClick={nextSlide}
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M8.25 4.5l7.5 7.5-7.5 7.5'
+          />
+        </svg>
       </div>
       {haveDot && (
         <div className='flex  justify-end'>
@@ -45,9 +68,9 @@ export const ImageSlider = ({ images, haveDot }) => {
               className='text-2xl cursor-pointer'
             >
               {i == currentIndex ? (
-                <CircleIcon sx={{ fontSize: 15, color: green[700] }} />
+                <div className='rounded-full bg-green-700' />
               ) : (
-                <CircleIcon sx={{ fontSize: 15 }} />
+                <div className='rounded-full bg-gray-500' />
               )}
             </div>
           ))}

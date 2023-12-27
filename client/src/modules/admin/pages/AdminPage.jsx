@@ -13,7 +13,9 @@ export default function AdminPage() {
   const ADMIN_ADDRESS = '0x12b70411d7eD174c9841E6c1E6ec5bF052eB5e86';
 
   const { data: campaigns, isLoading } = useCampaignGetAllQuery();
-
+  if (!isLoading) {
+    console.log(campaigns);
+  }
   return (
     <div className='h-[100%] mx-[90px] mt-6'>
       {/* {address !== ADMIN_ADDRESS ? (

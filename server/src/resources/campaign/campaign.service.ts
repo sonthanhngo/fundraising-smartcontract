@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Campaign } from './campaign.schema';
+import { Campaign, Review, Update } from './campaign.schema';
 import { Model } from 'mongoose';
 import { CampaignDto } from './dtos/campaign.dto';
 import { ReviewDto } from './dtos/review.dto';
@@ -12,30 +12,35 @@ export class CampaignService {
   async getCampaigns() {
     const res = await this.model
       .find({ isVerified: false })
-      .select('-reviews -updates -__v ');
+      .select('-reviews -updates -isVerified -__v ');
     return res;
   }
   async createCampaign(campaign: CampaignDto) {
-    console.log(campaign);
     const res = await this.model.create({
       ...campaign,
-      timeCreated: Date.now() + 7 * 3600 * 1000,
+      timeCreated: Date.now(),
     });
     return res;
   }
-  // async getCampaignById(id: string) {
-  //   const res = await this.model.find({ smartContractId: id });
-  //   return res;
-  // }
 
   async acceptCampaign(id: string) {
-    const res = await this.model.updateOne({ _id: id }, { isVerified: true });
-    return res;
+    const campaign = await this.model.findOne({ _id: id, isVerified: false });
+    if (campaign) {
+      const res = await this.model.updateOne({ _id: id }, { isVerified: true });
+      return 'ok';
+    }
+    return 'campaign not exist| campaign already verified';
   }
 
   async declineCampaign(id: string) {
-    const res = await this.model.deleteOne({ _id: id });
-    return res;
+    const campaign = await this.model.findOne({
+      _id: id,
+    });
+    if (campaign) {
+      const res = await this.model.deleteOne({ _id: id });
+      return 'ok';
+    }
+    return 'campaign not exist| campaign already declined';
   }
 
   async getCampaignReviews(id: string) {
@@ -48,19 +53,21 @@ export class CampaignService {
     return res == undefined ? 'no updates' : res[0].updates;
   }
 
-  async createReview(id: string, review: ReviewDto) {
+  async createReview(id: string, reviewDto: ReviewDto) {
+    const review: Review = reviewDto;
     const res = await this.model.updateOne(
       { _id: id },
       { $push: { reviews: review } },
     );
-    return res;
+    return res.acknowledged === true ? review : 'error';
   }
 
-  async createUpdate(id: string, update: UpdateDto) {
+  async createUpdate(id: string, updateDto: UpdateDto) {
+    const update: Update = { ...updateDto, date: Date.now() };
     const res = await this.model.updateOne(
       { _id: id },
-      { $push: { updates: { ...update, date: Date.now() + 7 * 3600 * 1000 } } },
+      { $push: { updates: update } },
     );
-    return res;
+    return res.acknowledged === true ? update : 'error';
   }
 }

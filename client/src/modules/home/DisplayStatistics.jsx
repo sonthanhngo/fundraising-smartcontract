@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { convertVND } from '../../common/utils/index';
 export const DisplayStatistics = ({ statistics }) => {
+  console.log(statistics);
   return (
     <div>
       <div>

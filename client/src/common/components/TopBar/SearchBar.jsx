@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
 
 export const SearchBar = ({ campaigns, cancelSearch }) => {
   const [searchInput, setSearchInput] = useState();
@@ -31,13 +30,24 @@ export const SearchBar = ({ campaigns, cancelSearch }) => {
           className=' w-[100%]  h-[70px]  text-[1.2rem] focus:outline-none '
           placeholder='Search for campaigns...'
         />
-        <CloseIcon
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          strokeWidth={1.5}
+          stroke='currentColor'
+          className='w-6 h-6 hover:cursor-pointer'
           onClick={() => {
             setSearchInput('');
             cancelSearch();
           }}
-          sx={{ fontSize: 30 }}
-        />
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            d='M6 18L18 6M6 6l12 12'
+          />
+        </svg>
       </div>
       {/* Display search result */}
       <div className=' absolute  bg-white w-[100%] z-10'>
