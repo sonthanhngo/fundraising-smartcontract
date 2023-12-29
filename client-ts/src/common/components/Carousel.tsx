@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 type CarouselProps = {
   images: string[];
-  haveDot: boolean;
+  haveDot?: boolean;
 };
 export const Carousel = ({ images, haveDot }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);

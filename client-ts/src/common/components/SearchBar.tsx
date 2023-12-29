@@ -1,27 +1,28 @@
-import { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-Link;
-export const SearchBar = ({ campaigns, cancelSearch }) => {
-  const { contract } = useContract(CONTRACT_ADDRESS);
-  const { data: campaigns } = useContractRead(contract, 'getCampaigns');
-  const [searchInput, setSearchInput] = useState();
-  const handleSearch = (campaigns, input) => {
-    const parsedData = campaigns.map((campaign, i) => ({
-      ownerName: campaign.ownerName,
-      verified: campaign.verified,
-      title: campaign.title,
-      image: campaign.images[0],
-      campaignId: i,
-    }));
-    if (input === '' || input === undefined) {
-      return [];
-    } else {
-      return parsedData.filter(
-        (campaign) =>
-          campaign.title.toLowerCase().includes(input) ||
-          campaign.title.includes(input)
-      );
-    }
+import { CampaignAfterFormat, CampaignFromContract } from '../utils/type';
+import { campaignConverter } from '../utils/type-converter';
+
+export type SearchBarProps = {
+  campaigns: CampaignFromContract[];
+  onCancel: () => void;
+};
+export const SearchBar = ({ campaigns, onCancel }: SearchBarProps) => {
+  const formattedCampaigns: CampaignAfterFormat[] = React.useMemo(() => {
+    return campaigns.map((campaign) => campaignConverter(campaign));
+  }, [campaigns]);
+  const [searchInput, setSearchInput] = React.useState('');
+  const searchResults = (): CampaignAfterFormat[] => {
+    return formattedCampaigns.filter((campaign) =>
+      campaign.title.toLowerCase().includes(searchInput)
+    );
+  };
+  const handleCancel = () => {
+    setSearchInput('');
+    onCancel();
+  };
+  const handleInput = (input: string) => {
+    setSearchInput(input);
   };
   return (
     <div>
@@ -29,7 +30,7 @@ export const SearchBar = ({ campaigns, cancelSearch }) => {
       <div className='flex border-b-2 items-center px-5'>
         <input
           type='text'
-          onChange={(e) => setSearchInput(e.target.value)}
+          onChange={(e) => handleInput(e.target.value)}
           className=' w-[100%]  h-[70px]  text-[1.2rem] focus:outline-none '
           placeholder='Search for campaigns...'
         />
@@ -40,10 +41,7 @@ export const SearchBar = ({ campaigns, cancelSearch }) => {
           strokeWidth={1.5}
           stroke='currentColor'
           className='w-6 h-6 hover:cursor-pointer'
-          onClick={() => {
-            setSearchInput('');
-            cancelSearch();
-          }}
+          onClick={handleCancel}
         >
           <path
             strokeLinecap='round'
@@ -54,14 +52,14 @@ export const SearchBar = ({ campaigns, cancelSearch }) => {
       </div>
       {/* Display search result */}
       <div className=' absolute  bg-white w-[100%] z-10'>
-        {handleSearch(campaigns, searchInput).map((search, id) => (
+        {searchResults().map((search, id) => (
           <Link
             key={id}
             className='flex space-x-5 border-b-2 hover:bg-slate-200 hover:cursor-pointer'
-            to={`../campaign/${search.campaignId}`}
+            to={`../campaign/${search.id}`}
           >
             <img
-              src={search.image}
+              src={search.images[0]}
               className='object-cover w-[150px] h-[80px]'
             />
             <div className='my-2'>

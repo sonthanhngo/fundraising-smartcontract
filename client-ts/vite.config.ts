@@ -9,7 +9,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './'),
-      '@shadcn': path.resolve(__dirname, './shadcn/components/ui'),
+      '@src': path.resolve(__dirname, './src/'),
+      '@shadcn': path.resolve(__dirname, './shadcn/'),
     },
   },
 });

@@ -26,13 +26,15 @@ export type CampaignAfterFormat = {
   images: string[];
 };
 
-export type StatisticsFromContract = {
-  totalCampaigns: BigNumber;
-  totalDonations: BigNumber;
-  totalDonators: BigNumber;
+export type StatisticsFromContract = BigNumber[];
+
+export type StatisticsAfterFormat = {
+  totalCampaigns: number;
+  totalDonations: number;
+  totalDonators: number;
 };
 
-export type DonationsFromContract = {
+export type DonationFromContract = {
   owner: string;
   donators: string[];
   donationsTime: BigNumber[];
@@ -57,4 +59,15 @@ export type ProfileStatistics = {
   totalDonations: number;
   totalDonators: number;
   totalCampaigns: number;
+};
+
+type Message = {
+  from: 1 | 2;
+  message: string;
+};
+export type Conversation = {
+  id: string;
+  recipient1: string;
+  recipient2: string;
+  messages: Message[];
 };

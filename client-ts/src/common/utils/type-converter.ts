@@ -1,4 +1,11 @@
-import { CampaignAfterFormat, CampaignFromContract } from './type';
+import {
+  CampaignAfterFormat,
+  CampaignFromContract,
+  DonationAfterFormat,
+  DonationFromContract,
+  StatisticsFromContract,
+  StatisticsAfterFormat,
+} from './type';
 
 export const campaignConverter = (
   campaign: CampaignFromContract
@@ -9,6 +16,26 @@ export const campaignConverter = (
     target: campaign.target.toNumber(),
     amountCollected: campaign.amountCollected!.toNumber(),
     timeCreated: campaign.timeCreated.toNumber(),
+  };
+};
+
+export const donationConverter = (
+  donation: DonationFromContract
+): DonationAfterFormat => {
+  return {
+    ...donation,
+    donationsTime: donation.donationsTime.map((time) => time.toNumber()),
+    donations: donation.donations.map((donation) => donation.toNumber()),
+  };
+};
+
+export const statisticsConverter = (
+  statistics: StatisticsFromContract
+): StatisticsAfterFormat => {
+  return {
+    totalCampaigns: statistics[0].toNumber(),
+    totalDonations: statistics[1].toNumber(),
+    totalDonators: statistics[2].toNumber(),
   };
 };
 

@@ -26,7 +26,7 @@ export class CampaignService {
   async acceptCampaign(id: string) {
     const campaign = await this.model.findOne({ _id: id, isVerified: false });
     if (campaign) {
-      const res = await this.model.updateOne({ _id: id }, { isVerified: true });
+      await this.model.updateOne({ _id: id }, { isVerified: true });
       return 'ok';
     }
     return 'campaign not exist| campaign already verified';
@@ -37,7 +37,7 @@ export class CampaignService {
       _id: id,
     });
     if (campaign) {
-      const res = await this.model.deleteOne({ _id: id });
+      await this.model.deleteOne({ _id: id });
       return 'ok';
     }
     return 'campaign not exist| campaign already declined';
@@ -45,12 +45,12 @@ export class CampaignService {
 
   async getCampaignReviews(id: string) {
     const res = await this.model.find({ _id: id }).select('reviews -_id');
-    return res == undefined ? 'no reviews' : res[0].reviews;
+    return res == undefined ? [] : res[0].reviews;
   }
 
   async getCampaignUpdates(id: string) {
     const res = await this.model.find({ _id: id }).select('updates -_id');
-    return res == undefined ? 'no updates' : res[0].updates;
+    return res == undefined ? [] : res[0].updates;
   }
 
   async createReview(id: string, reviewDto: ReviewDto) {

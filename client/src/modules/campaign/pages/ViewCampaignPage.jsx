@@ -20,7 +20,11 @@ import CampaignReviews from '../CampaignReviews';
 import CampaignUpdates from '../CampaignUpdates';
 import CreateUpdate from './ViewCampaignPage/components/CreateUpdate';
 import CreateReview from './ViewCampaignPage/components/CreateReview';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useUpdateGetByIdQuery } from '../../../api/update';
+import { useReviewGetByIdQuery } from '../../../api/review';
 
+const allTabs = ['updates', 'donations', 'reviews'];
 export default function ViewCampaignPage() {
   // donate amount
   const [donateAmount, setDonateAmount] = useState(100000);
@@ -60,6 +64,9 @@ export default function ViewCampaignPage() {
     console.log(campaign.timeCreated.toNumber());
     console.log(typeof new Date(campaign.deadline.toNumber()));
   }
+  const { data: reviews } = useReviewGetByIdQuery({ campaignId });
+  const { data: updates } = useUpdateGetByIdQuery({ campaignId });
+
   return (
     <div className='mx-[90px]'>
       {isLoadingCampaign ? (
@@ -92,7 +99,6 @@ export default function ViewCampaignPage() {
             </button>
           </h1>
 
-          <h2 className=' my-5 text-[1.2rem]'>{campaign.description}</h2>
           {/* container */}
           <div className='flex-col mt-10 h-[80vh]'>
             {/* image slider and campaign info */}
@@ -154,7 +160,45 @@ export default function ViewCampaignPage() {
             <div className='flex w-full mt-[20px] '>
               {/* Donators history */}
               <div className='w-3/5'>
-                <h3 className='font-semibold text-[2rem]'>latest donators</h3>
+                <h2 className=' my-5 text-[1.2rem]'>story</h2>
+                <h2 className=' my-5 text-[1.2rem]'>{campaign.description}</h2>
+                <Tabs defaultValue='updates' className='w-full'>
+                  <TabsList className='grid grid-cols-3 '>
+                    {allTabs.map((tab) => (
+                      <TabsTrigger
+                        value={tab}
+                        key={tab}
+                        className='data-[state=active]:text-green-700'
+                      >
+                        {tab}
+                        {/* {tab === 'reviews' && (
+                          <span>
+                            {tab}
+                            <span>{reviews.length}</span>
+                          </span>
+                        )}
+                        {tab === 'updates' && (
+                          <span>
+                            {tab}
+                            <span>{updates.length}</span>
+                          </span>
+                        )}
+                        {tab === 'donations' && (
+                          <span>
+                            {tab}
+                            <span>{donations.donators.length}</span>
+                          </span>
+                        )} */}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <TabsContent value='updates'>Updates content.</TabsContent>
+                  <TabsContent value='donations'>
+                    Donations content.
+                  </TabsContent>
+                  <TabsContent value='reviews'>Reviews content.</TabsContent>
+                </Tabs>
+                {/* <h3 className='font-semibold text-[2rem]'>latest donators</h3>
                 <ul>
                   {donations.donators.map((donator, i) => (
                     <li key={i}>
@@ -176,7 +220,7 @@ export default function ViewCampaignPage() {
                       </h4>
                     </li>
                   ))}
-                </ul>
+                </ul> */}
               </div>
               <div className='w-2/5 pl-10 text-[1.2rem]'>
                 {campaign.owner === address ? (
@@ -185,7 +229,7 @@ export default function ViewCampaignPage() {
                   </h4>
                 ) : (
                   <div>
-                    <h3 className='font-semibold text-[2rem]'>
+                    <h3 className='font-semibold text-[2rem] rounded-md text-center'>
                       support us here
                     </h3>
                     <div className='flex'>
@@ -199,9 +243,16 @@ export default function ViewCampaignPage() {
                           if (e.target.value === '') {
                             setDonateAmount(0);
                           } else {
-                            setDonateAmount(
-                              parseInt(e.target.value.replace(/,/g, ''))
+                            const value = parseInt(
+                              e.target.value.replace(/,/g, '')
                             );
+                            if (isNaN(value)) {
+                              setDonateAmount(0);
+                            } else {
+                              setDonateAmount(
+                                parseInt(e.target.value.replace(/,/g, ''))
+                              );
+                            }
                           }
                         }}
                       />
@@ -262,7 +313,7 @@ export default function ViewCampaignPage() {
               </div>
             </div>
           </div>
-          <div className='flex'>
+          {/* <div className='flex'>
             <div className='w-3/5 '>
               <h1 className='font-semibold text-[2rem]'>recent reviews</h1>
               <CampaignReviews id={campaign.id} />
@@ -271,7 +322,7 @@ export default function ViewCampaignPage() {
               <h1 className='font-semibold text-[2rem]'>recent updates</h1>
               <CampaignUpdates id={campaign.id} />
             </div>
-          </div>
+          </div> */}
         </div>
       )}
     </div>

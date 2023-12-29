@@ -1,6 +1,6 @@
 import Form from './components/Form';
 
-export const index = () => {
+export default function index() {
   return (
     <div>
       <div className='mx-[90px]'>
@@ -12,4 +12,4 @@ export const index = () => {
       </div>
     </div>
   );
-};
+}

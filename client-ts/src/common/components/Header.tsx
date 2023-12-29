@@ -4,26 +4,29 @@ import {
   useContractRead,
 } from '@thirdweb-dev/react';
 
-import { useState } from 'react';
+import React from 'react';
 import { SearchBar } from './SearchBar';
-import { CONTRACT_ADDRESS } from '../../utils';
+import { CONTRACT_ADDRESS } from '@src/common/utils/constant';
 
-export const TopBar = () => {
-
-
-  const [searchState, setSearchState] = useState(false);
+export const Header = () => {
+  const [searchState, setSearchState] = React.useState(false);
+  const { contract } = useContract(CONTRACT_ADDRESS);
+  const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(
+    contract,
+    'getCampaigns'
+  );
+  const handleCancel = () => {
+    setSearchState(false);
+  };
   return (
     <div className='mb-5 h-[70px] 100vw - 100%'>
       {searchState === true ? (
-        <SearchBar
-          campaigns={campaigns}
-          cancelSearch={() => setSearchState(false)}
-        />
+        <SearchBar campaigns={campaigns} onCancel={handleCancel} />
       ) : (
         // Topbar container
         <div className='flex  font-semibold  border-b-[4px] border-green-700'>
           <div className='w-2/6 m-auto '>
-            <a className='px-5 hover:text-green-700' href='/campaign/new'>
+            <a className='mx-5 hover:text-green-700' href='/campaign/new'>
               start a campaign
             </a>
             <svg
@@ -42,6 +45,7 @@ export const TopBar = () => {
             </svg>
             <button
               className=' hover:text-green-700'
+              disabled={isLoadingCampaigns}
               onClick={() => setSearchState(true)}
             >
               search
@@ -59,7 +63,7 @@ export const TopBar = () => {
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='w-6 h-6'
+              className='w-6 h-6 mt-1'
             >
               <path
                 strokeLinecap='round'
@@ -71,22 +75,24 @@ export const TopBar = () => {
               <a href='/profile'>profile</a>
             </button>
             <ConnectWallet
-              theme={{
-                colors: {
-                  primaryButtonBg: '#ffffff',
-                  primaryButtonText: '#000000',
-                  borderColor: '#ffffff',
-                  dropdownBg: '#ffffff',
-                  modalBg: '#ffffff',
-                },
-              }}
+              theme={
+                'light'
+                // colors: {
+                //   primaryButtonText: '#000000',
+                //   secondaryText: '#15803D',
+                //   connectedButtonBg: '#f0f0f0',
+                //   borderColor: '#000000',
+                //   dropdownBg: '#ffffff',
+                //   modalBg: '#ffffff',
+                // },
+              }
               hideTestnetFaucet={true}
               switchToActiveChain={true}
               modalSize={'compact'}
               welcomeScreen={{}}
               modalTitleIconUrl={''}
               btnTitle='connect wallet'
-              className=' hover:text-green-700 !min-h-[70px]'
+              className=' hover:text-green-700 !min-h-[60px] !my-2 !py-0 !border-2 !border-green-700 !mx-5'
             />
           </div>
         </div>

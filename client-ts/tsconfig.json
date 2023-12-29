@@ -8,7 +8,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@src/*": ["./src/*"]
+      "@src/*": ["./src/*"],
+      "@shadcn/*": ["./shadcn/*"]
     },
     /* Bundler mode */
     "moduleResolution": "bundler",

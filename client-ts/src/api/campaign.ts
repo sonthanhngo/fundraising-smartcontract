@@ -11,6 +11,16 @@ export const rtkApi = apiSlice
         CampaignGetAllArgs
       >({
         query: () => ({ url: '/campaign', method: 'GET' }),
+        transformResponse: (campaigns: CampaignFromServer[]) => {
+          const formattedCampaigns: Campaign[] = campaigns.map((campaign) => {
+            const { _id, ...rest } = campaign;
+            return {
+              ...rest,
+              id: _id,
+            };
+          });
+          return formattedCampaigns;
+        },
         providesTags: ['campaigns'],
       }),
       campaignCreate: builder.mutation<
@@ -54,7 +64,19 @@ export const {
   useCampaignDeclineMutation,
 } = rtkApi;
 
-type Campaign = {
+export type Campaign = {
+  owner: string;
+  ownerName: string;
+  title: string;
+  description: string;
+  target: number;
+  timeCreated: number;
+  deadline: number;
+  images: string[];
+  id: string;
+};
+
+type CampaignFromServer = {
   owner: string;
   ownerName: string;
   title: string;
@@ -69,7 +91,7 @@ type CampaignGetAllArgs = void;
 type CampaignGetAllResponseDto = Campaign[];
 
 type CampaignCreateResponseDto = Campaign;
-type CampaignCreateRequestDto = Omit<Campaign, 'timeCreated' | '_id'>;
+type CampaignCreateRequestDto = Omit<Campaign, 'timeCreated' | 'id'>;
 type CampaignCreateArgs = {
   body: CampaignCreateRequestDto;
 };

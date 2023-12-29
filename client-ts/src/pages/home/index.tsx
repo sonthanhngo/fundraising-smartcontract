@@ -1,8 +1,8 @@
 import { useContract, useContractRead } from '@thirdweb-dev/react';
-import { DisplayCampaigns } from '../../../common/components/DisplayCampaigns/DisplayCampaigns';
-import { DisplayStatistics } from '../DisplayStatistics';
-import { Loader } from '../../../common/components/misc/Loader';
-import { CONTRACT_ADDRESS } from '../../../common/utils';
+import { DisplayStatistics } from './components/DisplayStatistics';
+import { CONTRACT_ADDRESS } from '@src/common/utils/constant';
+import { Loader } from '@src/common/components/Loader';
+import { DisplayCampaigns } from '@src/common/campaign';
 export default function HomePage() {
   const { contract } = useContract(CONTRACT_ADDRESS);
   const { data: campaigns, isLoading: isLoadingCampaigns } = useContractRead(
@@ -13,15 +13,14 @@ export default function HomePage() {
     contract,
     'getStatistics'
   );
-  if (!isLoadingCampaigns) {
+  if (!isLoadingStatistics) {
     console.log(statistics);
-    console.log(campaigns);
   }
 
   return (
     <div className='h-[100%] mx-[90px] mt-6'>
-      {isLoadingCampaigns && isLoadingStatistics ? (
-        <Loader title='loading campaigns' />
+      {isLoadingCampaigns || isLoadingStatistics ? (
+        <Loader content='loading campaigns' />
       ) : (
         <div>
           <div className='text-center '>
@@ -33,11 +32,7 @@ export default function HomePage() {
           {/* Display statisctics */}
           <DisplayStatistics statistics={statistics} />
           {/* Display latest  campaigns */}
-          <DisplayCampaigns
-            title='latest campaigns'
-            campaigns={campaigns}
-            type='home'
-          />
+          <DisplayCampaigns campaigns={campaigns} type='home' />
         </div>
       )}
     </div>

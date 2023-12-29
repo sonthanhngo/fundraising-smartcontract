@@ -22,6 +22,7 @@ export class CampaignController {
 
   @Post()
   createCampaign(@Body(new ValidationPipe()) campaignDto: CampaignDto) {
+    console.log(campaignDto);
     return this.service.createCampaign(campaignDto);
   }
 
@@ -45,6 +46,7 @@ export class CampaignController {
     @Param('id') id: string,
     @Body(new ValidationPipe()) reviewDto: ReviewDto,
   ) {
+    console.log(reviewDto);
     return this.service.createReview(id, reviewDto);
   }
 
@@ -58,6 +60,7 @@ export class CampaignController {
     @Param('id') id: string,
     @Body(new ValidationPipe()) updateDto: UpdateDto,
   ) {
+    console.log(updateDto);
     return this.service.createUpdate(id, updateDto);
   }
 }

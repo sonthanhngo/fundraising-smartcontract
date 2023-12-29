@@ -2,9 +2,8 @@ import loader from '@src/assets/loader.svg';
 
 type LoaderProps = {
   content: string;
-  txHash?: string;
 };
-export const Loader = ({ content, txHash }: LoaderProps) => {
+export const Loader = ({ content }: LoaderProps) => {
   return (
     <div className='fixed inset-0 z-10 h-100% bg-[rgba(0,0,0,0.7)] flex items-center justify-center flex-col'>
       <img
@@ -15,7 +14,7 @@ export const Loader = ({ content, txHash }: LoaderProps) => {
 
       <p className='mt-[20px] font-epilogue font-bold text-[1.5rem] text-white text-center'>
         {content}
-        {txHash && (
+        {/* {txHash && (
           <a
             className='text-green-700'
             href={`https://sepolia.etherscan.io/tx/${txHash}`}
@@ -24,7 +23,7 @@ export const Loader = ({ content, txHash }: LoaderProps) => {
           >
             here
           </a>
-        )}
+        )} */}
       </p>
     </div>
   );

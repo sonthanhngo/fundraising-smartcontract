@@ -1,5 +1,16 @@
 import React from 'react';
 import {
+  CampaignFromContract,
+  DonationFromContract,
+} from '@/src/common/utils/type';
+import { getProfileDonations } from '@/src/common/utils/data-formatter';
+import { donationConverter } from '@/src/common/utils/type-converter';
+import { ChartData, ProfileStatistics } from '@/src/common/utils/type';
+import {
+  getChartData,
+  getProfileStatistics,
+} from '@/src/common/utils/data-formatter';
+import {
   BarChart,
   XAxis,
   YAxis,
@@ -7,35 +18,41 @@ import {
   Bar,
   ResponsiveContainer,
 } from 'recharts';
+import { DisplayCampaigns } from '@/src/common/campaign';
 
-import {
-  ChartData,
-  DonationAfterFormat,
-  ProfileStatistics,
-} from '@/src/common/utils/type';
-import {
-  getChartData,
-  getProfileStatistics,
-} from '@/src/common/utils/data-formatter';
-
-type StatisticProps = {
-  donations: DonationAfterFormat[];
+type FundraisedTabProps = {
+  campaigns: CampaignFromContract[];
+  donations: DonationFromContract[];
+  address: string;
 };
-export const Statistic = ({ donations }: StatisticProps) => {
+
+export const FundraisedTab = ({
+  campaigns,
+  donations,
+  address,
+}: FundraisedTabProps) => {
+  const campaignsDonations = React.useMemo(() => {
+    const formattedDonations = donations.map((donation) =>
+      donationConverter(donation)
+    );
+    return getProfileDonations(formattedDonations, address);
+  }, [donations, address]);
+
   const chartData: ChartData = React.useMemo(() => {
-    return getChartData(donations);
-  }, [donations]);
+    return getChartData(campaignsDonations);
+  }, [campaignsDonations]);
+  console.log(chartData);
   const { totalCampaigns, totalDonations, totalDonators }: ProfileStatistics =
     React.useMemo(() => {
-      return getProfileStatistics(donations);
-    }, [donations]);
-
+      return getProfileStatistics(campaignsDonations);
+    }, [campaignsDonations]);
   return (
-    <div className=''>
-      {donations.length == 0 ? (
-        <h1 className='text-center'> User haven't created any campaign</h1>
+    <div>
+      {campaignsDonations.length === 0 ? (
+        `${address} hasn't created any campaign yet!`
       ) : (
         <div>
+          {/* Display statistics */}
           <h1 className='text-[2.4rem] font-bold text-green-700 my-5'>
             campaigns statistics
           </h1>
@@ -98,6 +115,8 @@ export const Statistic = ({ donations }: StatisticProps) => {
               </div>
             </div>
           </div>
+          {/* DisplayCampaigns */}
+          <DisplayCampaigns campaigns={campaigns} type='userCreated' />
         </div>
       )}
     </div>

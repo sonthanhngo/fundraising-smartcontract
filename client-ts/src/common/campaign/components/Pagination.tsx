@@ -1,11 +1,12 @@
 import React from 'react';
-import { CampaignAfterFormat } from '../utils/type';
 import { CampaignCard } from './CampaignCard';
 import { CampaignCardAdmin } from './CampaignCardAdmin';
+import { CampaignAfterFormat } from '../../utils/type';
+import { Campaign as CampaignFromServer } from '@src/api/campaign';
 
 type PaginationProps = {
-  campaigns: CampaignAfterFormat[];
-  isAdmin: boolean;
+  campaigns: CampaignAfterFormat[] | CampaignFromServer[];
+  isAdmin?: boolean;
 };
 
 export const Pagination = ({ campaigns, isAdmin }: PaginationProps) => {
@@ -19,7 +20,9 @@ export const Pagination = ({ campaigns, isAdmin }: PaginationProps) => {
   const upperPageRange = (page: number): number => {
     return page * totalElementsPerPage;
   };
-  const pageElement = (page: number): CampaignAfterFormat[] => {
+  const pageElement = (
+    page: number
+  ): CampaignAfterFormat[] | CampaignFromServer[] => {
     return campaigns.slice(lowerPageRange(page), upperPageRange(page));
   };
   return (
@@ -33,7 +36,7 @@ export const Pagination = ({ campaigns, isAdmin }: PaginationProps) => {
       ) : (
         <div className='flex flex-wrap  space-x-2'>
           {pageElement(currentPage).map((element, id) => (
-            <CampaignCard key={id} campaign={element} />
+            <CampaignCard key={id} campaign={element as CampaignAfterFormat} />
           ))}
         </div>
       )}

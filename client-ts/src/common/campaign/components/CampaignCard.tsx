@@ -1,17 +1,17 @@
-import { getDaysLeft } from '../utils/data-formatter';
 import { useNavigate } from 'react-router-dom';
+import { getDaysLeft } from '@src/common/utils/data-formatter';
 import { Progress } from '@/shadcn/components/ui/progress';
-import { CampaignAfterFormat } from '../utils/type';
+import { CampaignAfterFormat } from '@src/common/utils/type';
 
 type CardProps = {
   campaign: CampaignAfterFormat;
 };
 export const CampaignCard = ({ campaign }: CardProps) => {
+  const navigate = useNavigate();
   const { ownerName, title, target, deadline, amountCollected, images, id } =
     campaign;
-  //   const percentageFund = amountPerTarget(amountCollected, target);
-  const percentageFund = 1;
-  const navigate = useNavigate();
+  console.log(amountCollected, target);
+  const percentageFund = Math.ceil((amountCollected / target) * 100);
 
   return (
     <div className='w-[32.7%] border-2 rounded-md '>
@@ -43,28 +43,17 @@ export const CampaignCard = ({ campaign }: CardProps) => {
           by <span className='font-semibold'>{ownerName}</span>
         </h2>
         <Progress
-          value={
-            (amountCollected / target) * 100 < 100
-              ? (amountCollected / target) * 100
-              : 100
-          }
+          value={percentageFund >= 100 ? 100 : percentageFund}
           className='my-2'
-          //   indicatorColor={
-          //     (amountCollected / target) * 100 < 100
-          //       ? 'bg-red-700'
-          //       : 'bg-green-700'
-          //   }
+          color={percentageFund >= 100 ? 'bg-green-700' : 'bg-red-700'}
         />
-
         <h2 className='text-[1rem]'>
-          {percentageFund >= 1 ? (
+          {percentageFund >= 100 ? (
             <span className='text-green-700 font-semibold'>
-              {' '}
               {percentageFund}%{' '}
             </span>
           ) : (
             <span className='text-red-500 font-semibold'>
-              {' '}
               {percentageFund}%{' '}
             </span>
           )}

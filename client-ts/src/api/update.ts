@@ -36,7 +36,7 @@ export const {
   useUpdateCreateByCampaignIdMutation,
 } = rtkApi;
 
-type Update = {
+export type Update = {
   date: number;
   update: string;
 };

@@ -36,7 +36,7 @@ export const {
   useReviewCreateByCampaignIdMutation,
 } = rtkApi;
 
-type Review = {
+export type Review = {
   address: string;
   review: string;
   amount: number;

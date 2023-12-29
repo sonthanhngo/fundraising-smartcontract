@@ -5,6 +5,7 @@ import { VNDtoEtherConverter } from '@src/common/utils/type-converter';
 import { Carousel } from '@src/common/components/Carousel';
 import { Loader } from '@src/common/components/Loader';
 import { useCampaignCreateMutation } from '@src/api/campaign';
+import { useToast } from '@shadcn/components/ui/use-toast';
 type FormSchema = {
   ownerName: string;
   title: string;
@@ -14,6 +15,7 @@ type FormSchema = {
   images: string[];
 };
 export default function Form() {
+  const { toast } = useToast();
   const address = useAddress();
   const navigate = useNavigate();
   // form data
@@ -22,7 +24,7 @@ export default function Form() {
     title: '',
     description: '',
     target: 10000000,
-    deadline: Date.now(),
+    deadline: 0,
     images: [],
   });
   const handleFormFieldChange = (
@@ -43,29 +45,32 @@ export default function Form() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (
-      !address &&
-      form.ownerName === '' &&
-      form.description === '' &&
-      form.images.length === 0
+      address &&
+      form.title !== '' &&
+      form.ownerName !== '' &&
+      form.description !== '' &&
+      form.images.length !== 0 &&
+      form.deadline !== 0
     ) {
-      alert('Missign fields');
-      return;
-    }
-    setIsWaitingTransaction(true);
-    const payload = await campaignCreate({
-      body: { ...form, owner: address! },
-    }).unwrap();
-    alert(JSON.stringify(payload));
-    if (isSuccess) {
+      setIsWaitingTransaction(true);
+      await campaignCreate({
+        body: { ...form, owner: address! },
+      }).unwrap();
       setTimeout(() => {
         setIsWaitingTransaction(false);
         navigate('/');
       }, 3000);
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'missing fields',
+      });
     }
   };
-  const [campaignCreate, { isSuccess }] = useCampaignCreateMutation();
+  const [campaignCreate] = useCampaignCreateMutation();
   // storage upload
   const { mutateAsync: uploadToIPFS } = useStorageUpload();
   const handleUpload = async (files: FileList) => {
@@ -81,6 +86,7 @@ export default function Form() {
     );
     return parsedURLs;
   };
+
   // temporary image file for preview
   const [imgFiles, setImgFiles] = React.useState<string[]>([]);
   const [isWaitingTransaction, setIsWaitingTransaction] = React.useState(false);
@@ -89,22 +95,23 @@ export default function Form() {
       {isWaitingTransaction && <Loader content='success' />}
 
       <fieldset className=' w-2/5 text-[1.2rem] '>
-        <div className='mb-10'>
+        <div className='mb-5'>
           <label htmlFor='ownerName' className='font-semibold '>
             who are you?
           </label>
           <input
             type='text'
             id='ownerName'
+            required
             maxLength={25}
             className='border-2 rounded-md w-[100%] h-[50px] px-5 focus:outline-none  '
             onChange={(e) => handleFormFieldChange('ownerName', e.target.value)}
           />
-          {form.ownerName === '' && (
-            <h1 className='font-semibold text-red-700'>required!</h1>
-          )}
+          <h1 className='font-semibold text-red-700 h-5'>
+            {form.ownerName === '' ? 'required!' : ''}
+          </h1>
         </div>
-        <div className='my-10'>
+        <div className='mb-5'>
           <label htmlFor='title' className='font-semibold'>
             campaign title?
           </label>
@@ -112,43 +119,48 @@ export default function Form() {
             type='text'
             id='title'
             maxLength={25}
+            required
             className='border-2 rounded-md w-[100%] h-[50px] px-5 '
             onChange={(e) => handleFormFieldChange('title', e.target.value)}
           />
-          {form.title === '' && (
-            <h1 className='font-semibold text-red-700'>required!</h1>
-          )}
+          <h1 className='font-semibold text-red-700 h-5'>
+            {form.title === '' ? 'required!' : ''}
+          </h1>
         </div>
-        <div className='my-10'>
+        <div className='mb-5'>
           <label htmlFor='description' className='font-semibold'>
             campaign description?
           </label>
           <textarea
             id='description'
+            required
             className='border-2 rounded-md w-[100%] h-[200px] px-5 py-5 focus:outline-none '
             onChange={(e) =>
               handleFormFieldChange('description', e.target.value)
             }
           ></textarea>
-          {form.description === '' && (
-            <h1 className='font-semibold text-red-700'>required!</h1>
-          )}
+          <h1 className='font-semibold text-red-700 h-5'>
+            {form.description === '' ? 'required!' : ''}
+          </h1>
         </div>
-        <div className='my-10'>
+        <div className='mb-5'>
           <label htmlFor='deadline' className='font-semibold '>
             deadline of this campaign?
           </label>
           <input
             type='date'
             id='deadline'
+            placeholder='dd-mm-YYYY'
+            required
+            min={new Date().toJSON().slice(0, 10)}
             className='border-2 rounded-md w-[100%] h-[50px] px-5 focus:outline-none'
             onChange={(e) => handleFormFieldChange('deadline', e.target.value)}
           />
-          {form.deadline !== Date.now() && (
-            <h1 className='font-semibold text-red-700'>required!</h1>
-          )}
+          <h1 className='font-semibold text-red-700 h-5'>
+            {form.deadline === 0 ? 'required!' : ''}
+          </h1>
         </div>
-        <div className='mt-10'>
+        <div className='mt-5'>
           <label htmlFor='target' className='font-semibold '>
             target of this campaign?
           </label>
@@ -156,7 +168,8 @@ export default function Form() {
             <input
               type='text'
               id='target'
-              pattern='[0-9]*[.]?[0-9]*'
+              required
+              // pattern='[0-9]*[.]?[0-9]*'
               className=' w-[100%] h-[50px] px-3 focus:outline-none '
               value={form.target.toLocaleString()}
               onChange={(e) => {
@@ -174,14 +187,15 @@ export default function Form() {
           </div>
           <h3 className='text-[1.2rem]'>
             that would be
-            <span className='text-red-500 font-semibold'>
+            <span className='text-red-700 font-semibold'>
+              {' '}
               {VNDtoEtherConverter(form.target)} ethers.
             </span>
           </h3>
         </div>
       </fieldset>
       {/* right side */}
-      <div className='w-3/5 mt-5'>
+      <div className='w-3/5 mt-7'>
         {/* image upload */}
         <div className='relative h-[400px] border-2 rounded-md'>
           {imgFiles.length != 0 ? (
@@ -192,6 +206,7 @@ export default function Form() {
                 type='file'
                 id='images'
                 multiple
+                required
                 className='h-full w-full absolute cursor-pointer opacity-0'
                 onChange={(e) => {
                   handleFormFieldChange('images', e.target.files!);
