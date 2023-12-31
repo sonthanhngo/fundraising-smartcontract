@@ -61,13 +61,14 @@ export type ProfileStatistics = {
   totalCampaigns: number;
 };
 
-type Message = {
-  from: 1 | 2;
-  message: string;
-};
 export type Conversation = {
-  id: string;
+  _id: string;
   recipient1: string;
   recipient2: string;
   messages: Message[];
+};
+export type Message = {
+  to: string;
+  time: number;
+  content: string;
 };

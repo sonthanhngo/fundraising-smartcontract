@@ -4,7 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './store.js';
 import { Header } from '@src/common/components/Header';
 import { Toaster } from '@shadcn/components/ui/toaster';
-// import Chat from '@src/common/chat';
+import { Chat } from '@src/common/chat';
 function App() {
   const appRouter = createBrowserRouter(appRoutes);
   return (

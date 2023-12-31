@@ -1,3 +1,3 @@
+import { ConversationModule } from './conversation/conversation.module';
 import { CampaignModule } from './campaign/campaign.module';
-// import { MessageModule } from './message/message.module';
-export const ResourcesModule = [CampaignModule];
+export const ResourcesModule = [CampaignModule, ConversationModule];

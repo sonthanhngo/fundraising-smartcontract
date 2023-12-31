@@ -3,7 +3,7 @@ import CreateCampaignPage from '../pages/campaign/create';
 import ViewCampaignPage from '../pages/campaign/view';
 import ProfilePage from '../pages/profile';
 import AdminPage from '../pages/admin';
-
+import TestPage from '../pages/test';
 export const appRoutes = [
   {
     path: '/',
@@ -25,4 +25,5 @@ export const appRoutes = [
     path: '/admin',
     element: <AdminPage />,
   },
+  { path: '/test', element: <TestPage /> },
 ];
