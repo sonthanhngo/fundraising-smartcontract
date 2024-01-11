@@ -28,7 +28,6 @@ export const DisplayCampaigns = ({
   const address = useAddress();
   const sortedCampaigns: CampaignAfterFormat[] = React.useMemo(() => {
     if (type !== 'admin') {
-      console.log(campaigns);
       const formattedCampaigns = campaigns.map((campaign) =>
         campaignConverter(campaign as CampaignFromContract)
       );
@@ -48,11 +47,15 @@ export const DisplayCampaigns = ({
 
   const userDonatedCampaigns: CampaignAfterFormat[] = React.useMemo(() => {
     if (address && type === 'userDonated') {
-      return getUserDonatedCampaigns(sortedCampaigns, donations!, address);
+      return getUserDonatedCampaigns(
+        campaigns as CampaignFromContract[],
+        donations!,
+        address
+      );
     } else {
       return [];
     }
-  }, [address, type, sortedCampaigns, donations]);
+  }, [address, type, campaigns, donations]);
 
   return (
     <div className=''>

@@ -1,10 +1,12 @@
 import {
   CampaignAfterFormat,
+  CampaignFromContract,
   ChartData,
   DonationAfterFormat,
   DonationFromContract,
   ProfileStatistics,
 } from './type';
+import { campaignConverter } from './type-converter';
 
 export const getDaysLeft = (deadline: number): number => {
   const difference: number = deadline - Date.now();
@@ -19,6 +21,17 @@ export const getProfileDonations = (
   return donations.filter((donation) => donation.owner === address);
 };
 
+export const getToAddress = (
+  address1: string,
+  address2: string,
+  address: string
+): string => {
+  if (address1 === address) {
+    return address2;
+  } else {
+    return address2;
+  }
+};
 export const getChartData = (donations: DonationAfterFormat[]): ChartData => {
   const mydonations = donations.map((donation) => ({
     ...donation,
@@ -69,21 +82,23 @@ export const getUserCreatedCampaigns = (
 };
 
 export const getUserDonatedCampaigns = (
-  campaigns: CampaignAfterFormat[],
+  campaigns: CampaignFromContract[],
   donations: DonationAfterFormat[] | DonationFromContract[],
   address: string
 ): CampaignAfterFormat[] => {
-  const userDonatedCampaigns: CampaignAfterFormat[] = [];
-
+  const userDonatedCampaigns: CampaignFromContract[] = [];
   campaigns.forEach((campaign, index) => {
     const donators = donations[index].donators;
     donators.forEach((donator) => {
-      if (donator === address) {
+      if (donator === address && !userDonatedCampaigns.includes(campaign)) {
         userDonatedCampaigns.push(campaign);
       }
     });
   });
-  return userDonatedCampaigns;
+  const formattedCampaigns = userDonatedCampaigns.map((campaign) =>
+    campaignConverter(campaign)
+  );
+  return getCampaignsSortedByDate(formattedCampaigns);
 };
 export const getCampaignsSortedByDate = (campaigns: CampaignAfterFormat[]) => {
   const temp = [...campaigns];

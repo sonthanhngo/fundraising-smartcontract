@@ -37,7 +37,7 @@ export default function ViewCampaignPage() {
     });
   const { data: updates, isLoading: isLoadingUpdates } =
     useUpdateGetAllByCampaignIdQuery({ id: campaignId! });
-
+  console.log(donation);
   return (
     <div className='mx-[90px] '>
       {isLoadingCampaign ||

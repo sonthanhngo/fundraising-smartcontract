@@ -10,7 +10,6 @@ export const CampaignCard = ({ campaign }: CardProps) => {
   const navigate = useNavigate();
   const { ownerName, title, target, deadline, amountCollected, images, id } =
     campaign;
-  console.log(amountCollected, target);
   const percentageFund = Math.ceil((amountCollected / target) * 100);
 
   return (

@@ -57,7 +57,6 @@ export const FundraisedTab = ({
             campaigns statistics
           </h1>
           <div className='flex space-x justify-between'>
-            {/* <DisplayChart donations={donations} /> */}
             <div className='w-3/4 '>
               <ResponsiveContainer width='100%' height={350}>
                 <BarChart data={chartData}>
@@ -68,10 +67,13 @@ export const FundraisedTab = ({
                     fontWeight='bold'
                   />
                   <YAxis
+                    dataKey='donations'
                     stroke='#000000'
                     fontSize={14}
                     tickLine={false}
-                    tickFormatter={(value) => `${value / 1000000}tr`}
+                    tickFormatter={(value) =>
+                      `${Math.round(value / 1000000)}tr`
+                    }
                     fontWeight='bold'
                   />
                   <Tooltip
@@ -81,7 +83,7 @@ export const FundraisedTab = ({
                     }}
                   />
                   <Bar
-                    dataKey='donation'
+                    dataKey='donations'
                     fill='#15803D'
                     radius={[4, 4, 0, 0]}
                     maxBarSize={100}

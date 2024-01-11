@@ -21,7 +21,6 @@ export default function ProfilePage() {
     contract,
     'getDonations'
   );
-
   return (
     <div className='mx-[90px] '>
       {isLoadingCampaigns || isLoadingDonations || !address ? (

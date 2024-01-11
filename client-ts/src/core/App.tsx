@@ -12,7 +12,7 @@ function App() {
       <ReduxProvider store={store}>
         <Header />
         <Toaster />
-        {/* <Chat /> */}
+        <Chat />
         <RouterProvider router={appRouter} />
       </ReduxProvider>
     </div>

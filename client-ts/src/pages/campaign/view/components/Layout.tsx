@@ -133,7 +133,8 @@ export const Layout = ({ campaign, donation }: LayoutProps) => {
             </div>
             <div className='h-1/4'>
               <h3 className='font-bold text-[2.4rem]'>
-                {getDaysLeft(deadline)} days left
+                {getDaysLeft(deadline) < 0 ? 0 : getDaysLeft(deadline)} days
+                left
               </h3>
               <h4 className=' text-[1.2rem]'>
                 ends in

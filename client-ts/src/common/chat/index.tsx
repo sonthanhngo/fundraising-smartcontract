@@ -19,19 +19,21 @@ export const Chat = () => {
     recipient2: '',
     content: '',
   });
+
   React.useEffect(() => {
-    socket.emit(
-      'getConversations',
-      { from: address },
-      (response: TConversation[]) => {
-        setConversations(response);
-      }
-    );
+    if (address) {
+      socket.emit(
+        'getConversations',
+        { from: address },
+        (response: TConversation[]) => {
+          setConversations(response);
+        }
+      );
+    }
   }, [address]);
 
   React.useEffect(() => {
     socket.on('newConversation', (conversation: TConversation) => {
-      console.log(conversation);
       setConversations((prev) => [...prev, conversation]);
     });
   }, []);
@@ -53,18 +55,16 @@ export const Chat = () => {
     if (form.recipient1 === '' || form.recipient2 === form.recipient1) {
       alert('error');
     } else {
-      socket.emit(
-        'createConversation',
-        { ...form },
-        (conversation: TConversation) => {
-          setConversations((prev) => [...prev, conversation]);
-        }
-      );
+      socket.emit('createConversation', form, (conversation: TConversation) => {
+        setConversations((prev) => [...prev, conversation]);
+      });
+      setIsNewConversation(false);
     }
   };
   const [isNewConversation, setIsNewConversation] = React.useState(false);
   const [isChat, setIsChat] = React.useState(false);
   const handleClose = () => {
+    setIsNewConversation(false);
     setIsChat(false);
   };
   return (
@@ -89,7 +89,7 @@ export const Chat = () => {
         </svg>
       </button>
       {isChat && (
-        <div className=' border-2 fixed bottom-[5rem] p-2 right-10 w-[35rem] h-[35rem] rounded-md '>
+        <div className=' border-2 fixed bottom-[5rem] bg-white z-10 p-2 right-10 w-[35rem] h-[35rem] rounded-md '>
           <div className='flex justify-between mb-5 '>
             <h1 className='font-bold text-[1rem]'>Chat</h1>
             <button onClick={() => setIsNewConversation(true)}>
@@ -126,47 +126,41 @@ export const Chat = () => {
             </button>
           </div>
           <div className='w-full h-[90%]'>
-            {/* {isNewConversation ? (
-              <div>
-                <label>enter address</label>
-                <input></input>
-              </div>
-            ) : ( */}
-            <Conversations />
-            {/* )} */}
+            {isNewConversation ? (
+              <form onSubmit={handleSubmit}>
+                <fieldset>
+                  <label htmlFor='to'>enter address</label>
+                  <input
+                    className='w-full border-2 rounded-md p-2'
+                    id='to'
+                    type='text'
+                    onChange={(e) => handleInputChange('to', e.target.value)}
+                  />
+                </fieldset>
+                <fieldset>
+                  <label htmlFor='content'>enter message</label>
+                  <textarea
+                    id='content'
+                    className='w-full border-2 rounded-md p-2 h-full'
+                    onChange={(e) =>
+                      handleInputChange('content', e.target.value)
+                    }
+                  />
+                </fieldset>
+                <button
+                  type='submit'
+                  className='text-center border-2 rounded-md w-full'
+                >
+                  {' '}
+                  submit{' '}
+                </button>
+              </form>
+            ) : (
+              <Conversations conversations={conversations} socket={socket} />
+            )}
           </div>
         </div>
       )}
-      {/* <form onSubmit={handleSubmit}>
-        <fieldset className=''>
-          <label htmlFor='to'>send message to?</label>
-          <input
-            type='text'
-            id='to'
-            className='border-2'
-            onChange={(e) => handleInputChange('to', e.target.value)}
-          ></input>
-        </fieldset>
-        <fieldset className=''>
-          <label htmlFor='content'>input your message</label>
-          <input
-            type='text'
-            id='content'
-            className='border-2'
-            onChange={(e) => handleInputChange('content', e.target.value)}
-          ></input>
-        </fieldset>
-        <input type='submit'></input>
-      </form>
-      {(address || conversations) &&
-        conversations.map((conversation, id) => (
-          <Conversation
-            conversation={conversation}
-            address={address!}
-            key={id}
-            socket={socket}
-          />
-        ))} */}
     </div>
   );
 };

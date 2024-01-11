@@ -10,6 +10,8 @@ import { CreateMessageDto } from './dtos/create-message.dto';
 import { Server, Socket } from 'socket.io';
 import { CreateConversationDto } from './dtos/create-conversation.dto';
 import { GetConversationsDto } from './dtos/get-conversations.dto';
+import { ValidationPipe } from '@nestjs/common';
+import { WSValidationPipe } from './ws-validation.pipe';
 
 @WebSocketGateway(3080, { cors: '*' })
 export class ConversationGateway {
@@ -28,15 +30,18 @@ export class ConversationGateway {
       createConversationDto,
     );
     const toSocket = this.conversationService.getUserSocket(recipient2);
+    console.log('sending');
     this.server.to(toSocket).emit('newConversation', conversation);
     return conversation;
   }
 
   @SubscribeMessage('getConversations')
   getConversations(
-    @MessageBody() getConversationDto: GetConversationsDto,
+    @MessageBody(new WSValidationPipe())
+    getConversationDto: GetConversationsDto,
     @ConnectedSocket() client: Socket,
   ) {
+    console.log('ok');
     return this.conversationService.getConversations(
       getConversationDto,
       client.id,

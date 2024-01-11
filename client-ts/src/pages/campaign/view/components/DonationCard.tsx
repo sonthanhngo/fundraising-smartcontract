@@ -137,6 +137,7 @@ export const DonationCard = ({ id, onClose }: DonationCardProps) => {
                 </fieldset>
                 <Web3Button
                   contractAddress={CONTRACT_ADDRESS}
+                  isDisabled={form.amount < 100000}
                   action={async (contract) => {
                     setIsWaitingTransaction(true);
                     await contract.call(
@@ -156,7 +157,7 @@ export const DonationCard = ({ id, onClose }: DonationCardProps) => {
                     handleSubmit();
                   }}
                   onError={() => setIsWaitingTransaction(false)}
-                  className='!w-full'
+                  className='!w-full disabled:bg-red-700 disabled:text-white'
                 >
                   donate to campaign
                 </Web3Button>

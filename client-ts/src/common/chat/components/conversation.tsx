@@ -2,6 +2,7 @@ import React, { FormEvent } from 'react';
 import { Socket } from 'socket.io-client';
 import { Message, Conversation as TConversation } from '@src/common/utils/type';
 import { unixTimestampToDateConverter } from '../../utils/type-converter';
+import { getToAddress } from '../../utils/data-formatter';
 
 type ConversationProps = {
   conversation: TConversation;
@@ -19,6 +20,7 @@ export const Conversation = ({
   address,
   socket,
 }: ConversationProps) => {
+  console.log(conversation);
   const { _id, recipient1, recipient2 } = conversation;
   const to = address === recipient1 ? recipient2 : recipient1;
   const [form, setForm] = React.useState<FormSchema>({
@@ -43,27 +45,35 @@ export const Conversation = ({
     socket.emit('createMessage', form, (message: Message) => {
       setMessages((prev) => [...prev, message]);
     });
+    setForm({ ...form, content: '' });
   };
+
   return (
-    <div className='border-2 '>
-      <h1>chat with {to}</h1>
-      {messages.map((message, id) => (
-        <div key={id} className='mb-10 border-2'>
-          <h1>
-            {message.to === recipient1 ? recipient2 : recipient1} at{' '}
-            {unixTimestampToDateConverter(message.time)}
-          </h1>
-          <h1>{message.content}</h1>
-        </div>
-      ))}
-      <form onSubmit={handleSubmit}>
+    <div className='h-full'>
+      <h1 className='text-[1.2rem] font-bold mb-5'>
+        {getToAddress(recipient1, recipient2, address)}
+      </h1>
+      <div className='h-[80%] overflow-y-auto'>
+        {messages.map((message, id) => (
+          <div className='' key={id}>
+            <h1 className='text-center font-semibold'>
+              {unixTimestampToDateConverter(message.time)}
+            </h1>
+            <h1 className='h-10 border-2 rounded-md p-2'>{message.content}</h1>
+          </div>
+        ))}
+      </div>
+      <form onSubmit={handleSubmit} className='absolute w-full bottom-3'>
         <fieldset className=''>
           <input
             type='text'
             onChange={handleInputChange}
-            className='border-2'
+            value={form.content}
+            className='border-2 w-4/5 rounded-md h-10 px-2 '
           ></input>
-          <input type='submit'></input>
+          <button type='submit' className='text-center w-1/5'>
+            send
+          </button>
         </fieldset>
       </form>
     </div>
