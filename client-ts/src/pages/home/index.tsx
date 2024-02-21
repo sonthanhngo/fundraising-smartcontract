@@ -13,9 +13,9 @@ export default function HomePage() {
     contract,
     'getStatistics'
   );
-  if (!isLoadingStatistics) {
-    console.log(statistics);
-  }
+  // if (!isLoadingStatistics) {
+  //   console.log(statistics);
+  // }
 
   return (
     <div className='h-[100%] mx-[90px] mt-6'>
@@ -27,7 +27,7 @@ export default function HomePage() {
             <h1 className='text-[2.4rem] font-bold text-green-700'>
               for the community
             </h1>
-            <h2 className='text-[1.2rem] my-3'>on GayQuyViet:</h2>
+            <h2 className='text-[1.2rem] my-3 font-bold'>on GayQuyViet:</h2>
           </div>
           {/* Display statisctics */}
           <DisplayStatistics statistics={statistics} />

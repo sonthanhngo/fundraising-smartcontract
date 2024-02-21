@@ -8,6 +8,7 @@ type ConversationProps = {
   conversation: TConversation;
   address: string;
   socket: Socket;
+  onNewMessage: () => void;
 };
 
 type FormSchema = {
@@ -19,8 +20,8 @@ export const Conversation = ({
   conversation,
   address,
   socket,
+  onNewMessage,
 }: ConversationProps) => {
-  console.log(conversation);
   const { _id, recipient1, recipient2 } = conversation;
   const to = address === recipient1 ? recipient2 : recipient1;
   const [form, setForm] = React.useState<FormSchema>({
@@ -35,8 +36,12 @@ export const Conversation = ({
   React.useEffect(() => {
     socket.on('newMessage', (message: Message) => {
       setMessages((prev) => [...prev, message]);
+      onNewMessage();
     });
-  }, [socket]);
+    return () => {
+      socket.off();
+    };
+  }, [socket, onNewMessage, conversation]);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, content: e.target.value });
   };
@@ -46,11 +51,12 @@ export const Conversation = ({
       setMessages((prev) => [...prev, message]);
     });
     setForm({ ...form, content: '' });
+    onNewMessage();
   };
 
   return (
     <div className='h-full'>
-      <h1 className='text-[1.2rem] font-bold mb-5'>
+      <h1 className='text-[1.2rem] font-bold mb-5 text-red-700'>
         {getToAddress(recipient1, recipient2, address)}
       </h1>
       <div className='h-[80%] overflow-y-auto'>
@@ -71,7 +77,7 @@ export const Conversation = ({
             value={form.content}
             className='border-2 w-4/5 rounded-md h-10 px-2 '
           ></input>
-          <button type='submit' className='text-center w-1/5'>
+          <button type='submit' className='text-center w-1/5 font-semibold'>
             send
           </button>
         </fieldset>

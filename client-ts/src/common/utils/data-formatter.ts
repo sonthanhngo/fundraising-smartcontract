@@ -29,7 +29,7 @@ export const getToAddress = (
   if (address1 === address) {
     return address2;
   } else {
-    return address2;
+    return address1;
   }
 };
 export const getChartData = (donations: DonationAfterFormat[]): ChartData => {

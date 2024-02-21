@@ -1,8 +1,11 @@
 import React, { FormEvent } from 'react';
 import { io } from 'socket.io-client';
-import { Conversation as TConversation } from '@src/common/utils/type';
-import { Conversations } from './components/conversations';
+import { Message, Conversation as TConversation } from '@src/common/utils/type';
 import { useAddress } from '@thirdweb-dev/react';
+import { Conversation } from './components/conversation';
+import { unixTimestampToDateConverter } from '../utils/type-converter';
+import { getToAddress } from '../utils/data-formatter';
+
 const socket = io('http://localhost:3080');
 type CreateConversationDto = {
   recipient1: string;
@@ -36,6 +39,9 @@ export const Chat = () => {
     socket.on('newConversation', (conversation: TConversation) => {
       setConversations((prev) => [...prev, conversation]);
     });
+    return () => {
+      socket.off();
+    };
   }, []);
 
   const handleInputChange = (fieldName: string, data: string) => {
@@ -52,7 +58,11 @@ export const Chat = () => {
   }
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (form.recipient1 === '' || form.recipient2 === form.recipient1) {
+    if (
+      form.recipient1 === '' ||
+      form.recipient2 === form.recipient1 ||
+      form.recipient2 === address
+    ) {
       alert('error');
     } else {
       socket.emit('createConversation', form, (conversation: TConversation) => {
@@ -66,6 +76,25 @@ export const Chat = () => {
   const handleClose = () => {
     setIsNewConversation(false);
     setIsChat(false);
+    setIsOpenConversation(false);
+  };
+  const [isOpenConversation, setIsOpenConversation] = React.useState(false);
+  const [selectedConversation, setSelectedConversation] = React.useState(0);
+  const handleClick = (id: number) => {
+    setSelectedConversation(id);
+    setIsOpenConversation(true);
+  };
+  const handleNewMessage = () => {
+    setTimeout(() => {
+      socket.emit(
+        'getConversations',
+        { from: address },
+        (response: TConversation[]) => {
+          console.log(response);
+          setConversations(response);
+        }
+      );
+    }, 1000);
   };
   return (
     <div className=''>
@@ -136,6 +165,9 @@ export const Chat = () => {
                     type='text'
                     onChange={(e) => handleInputChange('to', e.target.value)}
                   />
+                  <h1>
+                    {form.recipient2 === address && 'cannot send to yourself'}
+                  </h1>
                 </fieldset>
                 <fieldset>
                   <label htmlFor='content'>enter message</label>
@@ -156,7 +188,40 @@ export const Chat = () => {
                 </button>
               </form>
             ) : (
-              <Conversations conversations={conversations} socket={socket} />
+              <div className='h-full overflow-auto no-scrollbar'>
+                {!isOpenConversation
+                  ? address &&
+                    conversations &&
+                    conversations.map((conversation, id) => (
+                      <div
+                        className='border-2 p-2 rounded-md mb-5'
+                        onClick={() => handleClick(id)}
+                        key={id}
+                      >
+                        <h1 className='font-semibold text-[1rem] text-red-700'>
+                          {getToAddress(
+                            conversation.recipient1,
+                            conversation.recipient2,
+                            address
+                          )}
+                        </h1>
+                        <h1 className='font-semibold'>
+                          {unixTimestampToDateConverter(
+                            conversation.messages.slice(-1)[0].time
+                          )}
+                        </h1>
+                        {/* <h1>{conversation.messages.slice(-1)[0].content}</h1> */}
+                      </div>
+                    ))
+                  : address && (
+                      <Conversation
+                        conversation={conversations[selectedConversation]}
+                        address={address}
+                        socket={socket}
+                        onNewMessage={handleNewMessage}
+                      />
+                    )}
+              </div>
             )}
           </div>
         </div>
