@@ -9,7 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThirdwebProvider
       activeChain={Sepolia}
-      clientId='4b5980c7fe59b21b859f242286865838'
+      clientId={import.meta.env.VITE_THIRDWEB_CLIENTID}
       supportedWallets={[metamaskWallet()]}
     >
       <App />

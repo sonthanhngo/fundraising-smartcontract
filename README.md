@@ -34,7 +34,8 @@ cd server && yarn
 yarn start:dev
 ```
 
-Back-end secret in `backend/.env`
+Front-end secret in `client/.env`
+Back-end secret in `server/.env`
 
 Visit the page: https://localhost:5173
 
