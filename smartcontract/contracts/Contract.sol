@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: UNLICENSE
 pragma solidity >=0.8.2 <0.9.0;
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract Fundraising {
     // Contract owner
     address private admin;
-
+    AggregatorV3Interface internal dataFeed;
+    uint256 USDInWei;
     constructor(){
         admin = msg.sender;
     }
@@ -26,6 +28,7 @@ contract Fundraising {
         uint256 deadline;
         uint256 amountCollected;
         string[] images;
+        bool campaignFee;
     }
 
     struct Donation{
@@ -64,6 +67,7 @@ contract Fundraising {
         campaign.timeCreated = _timeCreated;
         campaign.deadline = _deadline;
         campaign.amountCollected = 0;
+        campaign.campaignFee = false;
         for(uint i = 0; i < _images.length; i++) {
             campaign.images.push(_images[i]);
         }
@@ -79,16 +83,37 @@ contract Fundraising {
         require(campaignId !=0, "Campaign not found!");
         Campaign storage campaign = campaigns[campaignId];
         Donation storage donation = donations[campaignId];
+        bool sentCampaignFee;
+        bool sentOwner;
 
-        (bool sent,) = payable(campaign.owner).call{value: msg.value}("");
+        if(campaign.campaignFee == false){
+            dataFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        (
+            /* uint80 roundID */,
+            int answer,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) = dataFeed.latestRoundData();
+            USDInWei = uint256(10**18/(answer/10**8));
+            uint256 FeeInWei= 5*USDInWei;
+            require(msg.value > FeeInWei,"Donate amount must not be 0");
+            (sentCampaignFee,) = payable(admin).call{value: FeeInWei}("");
+            (sentOwner,) = payable(campaign.owner).call{value: msg.value - FeeInWei}("");
+        }else{
+            (sentOwner,) = payable(campaign.owner).call{value: msg.value}("");
+        }
 
-        if(sent) {
+        if(sentOwner) {
             campaign.amountCollected = campaign.amountCollected + _amount;
             totalDonations = totalDonations + _amount;
             totalDonators = totalDonators + 1;
             donation.donators.push(msg.sender);
             donation.donations.push(_amount);
             donation.donationsTime.push(_donationTime);
+        }
+        if(sentCampaignFee){
+            campaign.campaignFee= true;
         }
     }
 
