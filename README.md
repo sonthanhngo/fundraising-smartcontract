@@ -17,7 +17,7 @@ corepack enable
 Clone the repository:
 
 ```
-git clone https://github.com/sonthanhngo/fundraising-smartcontract && cd fundraising-smart contract
+git clone https://github.com/sonthanhngo/fundraising-smartcontract && cd fundraising-smartcontract
 ```
 
 Install front-end dependencies and run:
@@ -36,4 +36,14 @@ yarn start:dev
 
 Back-end secret in `backend/.env`
 
-Visit the page at https://localhost:3030
+Visit the page: https://localhost:5173
+
+## How to set up the project from scratch
+
+Create your own free MongoDB instance using [MongoDB Atlas Cloud Database](https://www.mongodb.com/atlas/database).
+
+Create ThirdWeb account for publishing smart contract to network [ThirdWeb](https://thirdweb.com/dashboard).
+
+Modify contract code in `smartcontract/contracts/Contract.sol`
+
+Publish smart contract to Sepolia Testnet: `yarn deploy`
