@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
 import { io } from 'socket.io-client';
-import { Message, Conversation as TConversation } from '@src/common/utils/type';
+import { Conversation as TConversation } from '@src/common/utils/type';
 import { useAddress } from '@thirdweb-dev/react';
 import { Conversation } from './components/conversation';
 import { unixTimestampToDateConverter } from '../utils/type-converter';
